@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at tela_lcd.v(35): always construct contains both blocking and non-blocking assignments File: C:/Projetos-FPGA/FerM32bIPS/modulos/tela_lcd.v Line: 35

@@ -1,0 +1,177 @@
+module modulo_output_v2 (
+	input  [31:0] ValorSaida,
+	input         halt,
+	input         ClockCPU,
+	input         EnableOut,
+	input         EnableIn,
+	input         SwitchEnable, // SW[13] para controlar LED 13
+	output [13:0] Led,
+	output [6:0] Display1,
+	output [6:0] Display2,
+	output [6:0] Display3,
+	output [6:0] Display4,
+	output [6:0] DisplayPC1,
+	output [6:0] DisplayPC2,
+	output [6:0] DisplayFP1,
+	output [6:0] DisplayFP2,
+	// output [6:0] DisplayS01,
+	// output [6:0] DisplayS02,
+	// output [6:0] DisplayS03,
+	// output [6:0] DisplayS04,
+	input  [9:0] PC,
+	input [31:0] FP,
+	// input [31:0] S0,
+	input        clk
+);
+
+	// Registradores individuais por dígito (0-9) para os oito displays disponíveis
+	reg [3:0] valorDisplay1;
+	reg [3:0] valorDisplay2;
+	reg [3:0] valorDisplay3;
+	reg [3:0] valorDisplay4;
+	reg [3:0] valorDisplayPC1;
+	reg [3:0] valorDisplayPC2;
+	reg [3:0] valorDisplayFP1;
+	reg [3:0] valorDisplayFP2;
+
+	// reg [3:0] valorDisplayS01;
+	// reg [3:0] valorDisplayS02;
+	// reg [3:0] valorDisplayS03;
+	// reg [3:0] valorDisplayS04;
+
+	reg       regLed13;  // LED 13 (status SW[13] - switches habilitados)
+	reg [12:0] RegLeds;
+	reg [31:0] valorRegistrado;  // Armazena o último valor a ser exibido
+
+	initial begin
+		valorDisplay1   <= 4'd0;
+		valorDisplay2   <= 4'd0;
+		valorDisplay3   <= 4'd0;
+		valorDisplay4   <= 4'd0;
+
+		valorDisplayPC1 <= 4'd0;
+		valorDisplayPC2 <= 4'd0;
+
+		valorDisplayFP1 <= 4'd0;
+		valorDisplayFP2 <= 4'd0;
+
+		// valorDisplayS01 <= 4'd0;
+		// valorDisplayS02 <= 4'd0;
+		// valorDisplayS03 <= 4'd0;
+		// valorDisplayS04 <= 4'd0;
+
+		regLed13        <= 1'b0;
+		RegLeds         <= 13'd0;
+		valorRegistrado <= 32'd0;
+	end
+
+	// Atualização dos displays de valor + FP (em ClockCPU)
+	always @(posedge ClockCPU) begin
+		// Atualiza constantemente os dígitos do FP para os dois displays dedicados
+		valorDisplayFP1 <= FP % 10;
+		valorDisplayFP2 <= (FP % 100) / 10;
+
+		// valorDisplayS01 <= S0 % 10;
+		// valorDisplayS02 <= (S0 % 100) / 10;
+		// valorDisplayS03 <= (S0 % 1000) / 100;
+		// valorDisplayS04 <= (S0 % 10000) / 1000;
+
+		// Captura e armazena valores para exibição
+		if (EnableOut && SwitchEnable) begin
+			valorRegistrado <= ValorSaida;
+		end
+		
+		// Atualiza os displays com o valor armazenado
+		valorDisplay1 <= valorRegistrado % 10;
+		valorDisplay2 <= (valorRegistrado % 100) / 10;
+		valorDisplay3 <= (valorRegistrado % 1000) / 100;
+		valorDisplay4 <= (valorRegistrado % 10000) / 1000;
+	end
+
+	// Atualização dos displays de PC e LEDs usando clock de 50MHz
+	always @(posedge clk) begin
+		if (halt) begin
+			// Durante HALT, apaga os dígitos do PC
+			valorDisplayPC1 <= 4'b1111;
+			valorDisplayPC2 <= 4'b1111;
+		end else begin
+			// Mostra os últimos dois dígitos do PC
+			valorDisplayPC1 <= PC % 10;
+			valorDisplayPC2 <= (PC % 100) / 10;
+		end
+
+		// LED 13 indica se os switches estão habilitados
+		regLed13 <= SwitchEnable;
+
+		// LEDs 0-12 mostram os 13 bits menos significativos de ValorSaida quando EnableIn está ativo
+		if (EnableIn) begin
+			RegLeds <= ValorSaida[12:0];
+		end else begin
+			RegLeds <= 13'd0;
+		end
+	end
+
+	// Instâncias dos conversores BCD → 7 segmentos
+	display_7segmentos bcd1 (
+		valorDisplay1,
+		Display1
+	);
+
+	display_7segmentos bcd2 (
+		valorDisplay2,
+		Display2
+	);
+
+	display_7segmentos bcd3 (
+		valorDisplay3,
+		Display3
+	);
+
+	display_7segmentos bcd4 (
+		valorDisplay4,
+		Display4
+	);
+
+	display_7segmentos bcd5 (
+		valorDisplayPC1,
+		DisplayPC1
+	);
+
+	display_7segmentos bcd6 (
+		valorDisplayPC2,
+		DisplayPC2
+	);
+
+	display_7segmentos bcd7 (
+		valorDisplayFP1,
+		DisplayFP1
+	);
+
+	display_7segmentos bcd8 (
+		valorDisplayFP2,
+		DisplayFP2
+	);
+
+	// display_7segmentos bcd5 (
+	// 	valorDisplayS01,
+	// 	DisplayS01
+	// );
+
+	// display_7segmentos bcd6 (
+	// 	valorDisplayS02,
+	// 	DisplayS02
+	// );
+
+	// display_7segmentos bcd7 (
+	// 	valorDisplayS03,
+	// 	DisplayS03
+	// );
+
+	// display_7segmentos bcd8 (
+	// 	valorDisplayS04,
+	// 	DisplayS04
+	// );
+
+	assign Led = {regLed13, RegLeds[12:0]}; // LED13=Status SW[13], LEDs 0-12=Funcionalidade original
+
+endmodule

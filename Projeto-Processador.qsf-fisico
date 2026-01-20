@@ -1,0 +1,219 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2019  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
+# Date created = 23:23:42  June 07, 2023
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		UnidadeProcessamento_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE115F29C7
+set_global_assignment -name TOP_LEVEL_ENTITY unidade_processamento
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 19.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "23:23:42  JUNE 07, 2023"
+set_global_assignment -name LAST_QUARTUS_VERSION "19.1.0 Lite Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name NOMINAL_CORE_SUPPLY_VOLTAGE 1.2V
+set_global_assignment -name FITTER_EFFORT "FAST FIT"
+set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
+set_global_assignment -name SMART_RECOMPILE ON
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+
+# Inputs
+set_location_assignment PIN_Y2 -to EntradaClock
+set_location_assignment PIN_M23 -to Botao
+set_location_assignment PIN_N21 -to BotaoContinue
+set_location_assignment PIN_AB28 -to Sw[0]
+set_location_assignment PIN_AC28 -to Sw[1]
+set_location_assignment PIN_AC27 -to Sw[2]
+set_location_assignment PIN_AD27 -to Sw[3]
+set_location_assignment PIN_AB27 -to Sw[4]
+set_location_assignment PIN_AC26 -to Sw[5]
+set_location_assignment PIN_AD26 -to Sw[6]
+set_location_assignment PIN_AB26 -to Sw[7]
+set_location_assignment PIN_AC25 -to Sw[8]
+set_location_assignment PIN_AB25 -to Sw[9]
+set_location_assignment PIN_AC24 -to Sw[10]
+set_location_assignment PIN_AB24 -to Sw[11]
+set_location_assignment PIN_AB23 -to Sw[12]
+set_location_assignment PIN_AA24 -to Sw[13]
+set_location_assignment PIN_Y23 -to LoopEnable
+
+# Outputs
+set_location_assignment PIN_G19 -to Led[0]
+set_location_assignment PIN_F19 -to Led[1]
+set_location_assignment PIN_E19 -to Led[2]
+set_location_assignment PIN_F21 -to Led[3]
+set_location_assignment PIN_F18 -to Led[4]
+set_location_assignment PIN_E18 -to Led[5]
+set_location_assignment PIN_J19 -to Led[6]
+set_location_assignment PIN_H19 -to Led[7]
+set_location_assignment PIN_J17 -to Led[8]
+set_location_assignment PIN_G17 -to Led[9]
+set_location_assignment PIN_J15 -to Led[10]
+set_location_assignment PIN_H16 -to Led[11]
+set_location_assignment PIN_J16 -to Led[12]
+set_location_assignment PIN_H17 -to Led[13]
+set_location_assignment PIN_H15 -to Led_LoopStatus
+set_location_assignment PIN_G18 -to Display1[0]
+set_location_assignment PIN_F22 -to Display1[1]
+set_location_assignment PIN_E17 -to Display1[2]
+set_location_assignment PIN_L26 -to Display1[3]
+set_location_assignment PIN_L25 -to Display1[4]
+set_location_assignment PIN_J22 -to Display1[5]
+set_location_assignment PIN_H22 -to Display1[6]
+set_location_assignment PIN_M24 -to Display2[0]
+set_location_assignment PIN_Y22 -to Display2[1]
+set_location_assignment PIN_W21 -to Display2[2]
+set_location_assignment PIN_W22 -to Display2[3]
+set_location_assignment PIN_W25 -to Display2[4]
+set_location_assignment PIN_U23 -to Display2[5]
+set_location_assignment PIN_U24 -to Display2[6]
+set_location_assignment PIN_AA25 -to Display3[0]
+set_location_assignment PIN_AA26 -to Display3[1]
+set_location_assignment PIN_Y25 -to Display3[2]
+set_location_assignment PIN_W26 -to Display3[3]
+set_location_assignment PIN_Y26 -to Display3[4]
+set_location_assignment PIN_W27 -to Display3[5]
+set_location_assignment PIN_W28 -to Display3[6]
+set_location_assignment PIN_V21 -to Display4[0]
+set_location_assignment PIN_U21 -to Display4[1]
+set_location_assignment PIN_AB20 -to Display4[2]
+set_location_assignment PIN_AA21 -to Display4[3]
+set_location_assignment PIN_AD24 -to Display4[4]
+set_location_assignment PIN_AF23 -to Display4[5]
+set_location_assignment PIN_Y19 -to Display4[6]
+
+# Debugs
+# MSB FP
+set_location_assignment PIN_AD17 -to DisplayFP2[0]
+set_location_assignment PIN_AE17 -to DisplayFP2[1]
+set_location_assignment PIN_AG17 -to DisplayFP2[2]
+set_location_assignment PIN_AH17 -to DisplayFP2[3]
+set_location_assignment PIN_AF17 -to DisplayFP2[4]
+set_location_assignment PIN_AG18 -to DisplayFP2[5]
+set_location_assignment PIN_AA14 -to DisplayFP2[6]
+# LSB FP
+set_location_assignment PIN_AA17 -to DisplayFP1[0]
+set_location_assignment PIN_AB16 -to DisplayFP1[1]
+set_location_assignment PIN_AA16 -to DisplayFP1[2]
+set_location_assignment PIN_AB17 -to DisplayFP1[3]
+set_location_assignment PIN_AB15 -to DisplayFP1[4]
+set_location_assignment PIN_AA15 -to DisplayFP1[5]
+set_location_assignment PIN_AC17 -to DisplayFP1[6]
+
+# MSB PC
+set_location_assignment PIN_AD18 -to DisplayPC2[0]
+set_location_assignment PIN_AC18 -to DisplayPC2[1]
+set_location_assignment PIN_AB18 -to DisplayPC2[2]
+set_location_assignment PIN_AH19 -to DisplayPC2[3]
+set_location_assignment PIN_AG19 -to DisplayPC2[4]
+set_location_assignment PIN_AF18 -to DisplayPC2[5]
+set_location_assignment PIN_AH18 -to DisplayPC2[6]
+# LSB PC
+set_location_assignment PIN_AB19 -to DisplayPC1[0]
+set_location_assignment PIN_AA19 -to DisplayPC1[1]
+set_location_assignment PIN_AG21 -to DisplayPC1[2]
+set_location_assignment PIN_AH21 -to DisplayPC1[3]
+set_location_assignment PIN_AE19 -to DisplayPC1[4]
+set_location_assignment PIN_AF19 -to DisplayPC1[5]
+set_location_assignment PIN_AE18 -to DisplayPC1[6]
+
+# LCD
+set_location_assignment PIN_M2 -to LCD_RS
+set_location_assignment PIN_M1 -to LCD_RW
+set_location_assignment PIN_L4 -to LCD_EN
+set_location_assignment PIN_L6 -to LCD_BLON
+set_location_assignment PIN_L5 -to LCD_ON
+set_location_assignment PIN_L3 -to LCD_DATA[0]
+set_location_assignment PIN_L1 -to LCD_DATA[1]
+set_location_assignment PIN_L2 -to LCD_DATA[2]
+set_location_assignment PIN_K7 -to LCD_DATA[3]
+set_location_assignment PIN_K1 -to LCD_DATA[4]
+set_location_assignment PIN_K2 -to LCD_DATA[5]
+set_location_assignment PIN_M3 -to LCD_DATA[6]
+set_location_assignment PIN_M5 -to LCD_DATA[7]
+
+set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
+set_global_assignment -name FINAL_PLACEMENT_OPTIMIZATION NEVER
+set_global_assignment -name FITTER_AGGRESSIVE_ROUTABILITY_OPTIMIZATION NEVER
+set_global_assignment -name SYNCHRONIZER_IDENTIFICATION AUTO
+set_global_assignment -name SDC_FILE "Projeto-Processador.sdc"
+set_global_assignment -name SOURCE_FILE "Projeto-Processador.qsf"
+set_global_assignment -name TEXT_FILE single_port_rom_init.txt
+set_global_assignment -name VERILOG_FILE modulos/unidade_processamento.v
+set_global_assignment -name VERILOG_FILE modulos/unidade_pc_output.v
+set_global_assignment -name VERILOG_FILE modulos/unidade_controle_ULA.v
+set_global_assignment -name VERILOG_FILE modulos/unidade_controle.v
+set_global_assignment -name VERILOG_FILE modulos/tela_lcd.v
+set_global_assignment -name VERILOG_FILE modulos/reset_delay.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_saida.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_regdst.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_pc.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_memtoreg.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_jump.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_jr.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_offset_base.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_jal.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_mem_instrucoes.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_mem_dados.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_interrupcao.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_entrada.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_destino.v
+set_global_assignment -name VERILOG_FILE modulos/multiplex_ALUSrc.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_ula.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_pc.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_output.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_jump.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_input.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_branch.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_mapper_md.v
+set_global_assignment -name VERILOG_FILE modulos/lcdlab3.v
+set_global_assignment -name VERILOG_FILE modulos/display_lcd.v
+set_global_assignment -name VERILOG_FILE modulos/display_7segmentos.v
+set_global_assignment -name VERILOG_FILE modulos/debounce.v
+set_global_assignment -name VERILOG_FILE modulos/bne_or_beq.v
+set_global_assignment -name VERILOG_FILE modulos/bcd.v
+set_global_assignment -name VERILOG_FILE modulos/banco_registradores.v
+set_global_assignment -name VERILOG_FILE modulos/modulo_pc_v2.v
+set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE SPEED
+set_global_assignment -name VERILOG_FILE modulos/modulo_output_v2.v
+set_global_assignment -name VERILOG_FILE modulos/unidade_processamento_v2.v
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

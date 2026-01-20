@@ -1,0 +1,1343 @@
+/*
+ SW8 (GLOBAL RESET) resets LCD
+ENTITY LCD_Display IS
+-- Enter number of live Hex hardware data values to display
+-- (do not count ASCII character constants)
+	GENERIC(Num_Hex_Digits: Integer:= 2); 
+-----------------------------------------------------------------------
+-- LCD Displays 16 Characters on 2 lines
+-- LCD_display string is an ASCII character string entered in hex for 
+-- the two lines of the  LCD Display   (See ASCII to hex table below)
+-- Edit LCD_Display_String entries above to modify display
+-- Enter the ASCII character's 2 hex digit equivalent value
+-- (see table below for ASCII hex values)
+-- To display character assign ASCII value to LCD_display_string(x)
+-- To skip a character use 8'h20" (ASCII space)
+-- To dislay "live" hex values from hardware on LCD use the following: 
+--   make array element for that character location 8'h0" & 4-bit field from Hex_Display_Data
+--   state machine sees 8'h0" in high 4-bits & grabs the next lower 4-bits from Hex_Display_Data input
+--   and performs 4-bit binary to ASCII conversion needed to print a hex digit
+--   Num_Hex_Digits must be set to the count of hex data characters (ie. "00"s) in the display
+--   Connect hardware bits to display to Hex_Display_Data input
+-- To display less than 32 characters, terminate string with an entry of 8'hFE"
+--  (fewer characters may slightly increase the LCD's data update rate)
+------------------------------------------------------------------- 
+--                        ASCII HEX TABLE
+--  Hex						Low Hex Digit
+-- Value  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+------\----------------------------------------------------------------
+--H  2 |  SP  !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /
+--i  3 |  0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?
+--g  4 |  @   A   B   C   D   E   F   G   H   I   J   K   L   M   N   O
+--h  5 |  P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^   _
+--   6 |  `   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o
+--   7 |  p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~ DEL
+-----------------------------------------------------------------------
+-- Example "A" is row 4 column 1, so hex value is 8'h41"
+-- *see LCD Controller's Datasheet for other graphics characters available
+*/
+		
+module display_lcd(
+	iCLK_50MHZ, 
+	iRST_N, 
+	hex3_Num2, 
+	hex2_Num2, 
+	hex1_Num2, 
+	hex0_Num2, 
+	hex3_Num1, 
+	hex2_Num1, 
+	hex1_Num1, 
+	hex0_Num1,
+	Choice, 
+	LCD_RS, 
+	LCD_E, 
+	LCD_RW, 
+	DATA_BUS
+);
+
+input iCLK_50MHZ, iRST_N;
+input [3:0] hex3_Num2, hex2_Num2, hex1_Num2, hex0_Num2, hex3_Num1, hex2_Num1, hex1_Num1, hex0_Num1;
+output LCD_RS, LCD_E, LCD_RW;
+inout [7:0] DATA_BUS;
+input [15:0] Choice;
+
+parameter
+HOLD = 4'h0,
+FUNC_SET = 4'h1,
+DISPLAY_ON = 4'h2,
+MODE_SET = 4'h3,
+Print_String = 4'h4,
+LINE2 = 4'h5,
+RETURN_HOME = 4'h6,
+DROP_LCD_E = 4'h7,
+RESET1 = 4'h8,
+RESET2 = 4'h9,
+RESET3 = 4'ha,
+DISPLAY_OFF = 4'hb,
+DISPLAY_CLEAR = 4'hc;
+
+reg [3:0] state, next_command;
+// Enter new ASCII hex data above for LCD Display
+reg [7:0] DATA_BUS_VALUE;
+wire [7:0] Next_Char;
+reg [19:0] CLK_COUNT_400HZ;
+reg [4:0] CHAR_COUNT;
+reg CLK_400HZ, LCD_RW_INT, LCD_E, LCD_RS;
+
+// BIDIRECTIONAL TRI STATE LCD DATA BUS
+assign DATA_BUS = (LCD_RW_INT? 8'bZZZZZZZZ: DATA_BUS_VALUE);
+
+LCD_display_string u1(
+.index(CHAR_COUNT),
+.out(Next_Char),
+.choice(Choice),
+.hex3_Num2(hex3_Num2),
+.hex2_Num2(hex2_Num2),
+.hex1_Num2(hex1_Num2),
+.hex0_Num2(hex0_Num2),
+.hex3_Num1(hex3_Num1),
+.hex2_Num1(hex2_Num1),
+.hex1_Num1(hex1_Num1),
+.hex0_Num1(hex0_Num1));
+
+assign LCD_RW = LCD_RW_INT;
+
+always @(posedge iCLK_50MHZ or negedge iRST_N)
+	if (!iRST_N)
+	begin
+	   CLK_COUNT_400HZ <= 20'h00000;
+	   CLK_400HZ <= 1'b0;
+	end
+	else if (CLK_COUNT_400HZ < 20'h0F424)
+	begin
+	   CLK_COUNT_400HZ <= CLK_COUNT_400HZ + 1'b1;
+	end
+	else
+	begin
+	  CLK_COUNT_400HZ <= 20'h00000;
+	  CLK_400HZ <= ~CLK_400HZ;
+	end
+// State Machine to send commands and data to LCD DISPLAY
+
+always @(posedge CLK_400HZ or negedge iRST_N)
+	if (!iRST_N)
+	begin
+	 state <= RESET1;
+	end
+	else
+	case (state)
+	RESET1:			
+// Set Function to 8-bit transfer and 2 line display with 5x8 Font size
+// see Hitachi HD44780 family data sheet for LCD command and timing details
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h38;
+	  state <= DROP_LCD_E;
+	  next_command <= RESET2;
+	  CHAR_COUNT <= 5'b00000;
+	end
+	RESET2:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h38;
+	  state <= DROP_LCD_E;
+	  next_command <= RESET3;
+	end
+	RESET3:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h38;
+	  state <= DROP_LCD_E;
+	  next_command <= FUNC_SET;
+	end
+// EXTRA STATES ABOVE ARE NEEDED FOR RELIABLE PUSHBUTTON RESET OF LCD
+
+	FUNC_SET:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h38;
+	  state <= DROP_LCD_E;
+	  next_command <= DISPLAY_OFF;
+	end
+
+// Turn off Display and Turn off cursor
+	DISPLAY_OFF:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h08;
+	  state <= DROP_LCD_E;
+	  next_command <= DISPLAY_CLEAR;
+	end
+
+// Clear Display and Turn off cursor
+	DISPLAY_CLEAR:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h01;
+	  state <= DROP_LCD_E;
+	  next_command <= DISPLAY_ON;
+	end
+
+// Turn on Display and Turn off cursor
+	DISPLAY_ON:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h0C;
+	  state <= DROP_LCD_E;
+	  next_command <= MODE_SET;
+	end
+
+// Set write mode to auto increment address and move cursor to the right
+	MODE_SET:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h06;
+	  state <= DROP_LCD_E;
+	  next_command <= Print_String;
+	end
+
+// Write ASCII hex character in first LCD character location
+	Print_String:
+	begin
+	  state <= DROP_LCD_E;
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b1;
+	  LCD_RW_INT <= 1'b0;
+	// ASCII character to output
+	  if (Next_Char[7:4] != 4'h0)
+		DATA_BUS_VALUE <= Next_Char;
+		// Convert 4-bit value to an ASCII hex digit
+	  else if (Next_Char[3:0] >9)
+		// ASCII A...F
+		 DATA_BUS_VALUE <= {4'h4,Next_Char[3:0]};//-4'h9};
+	  else
+		// ASCII 0...9
+		 DATA_BUS_VALUE <= {4'h3,Next_Char[3:0]};
+	// Loop to send out 32 characters to LCD Display  (16 by 2 lines)
+	  if ((CHAR_COUNT < 31) && (Next_Char != 8'hFE))
+	     CHAR_COUNT <= CHAR_COUNT + 1'b1;
+	  else
+	     CHAR_COUNT <= 5'b00000; 
+	// Jump to second line?
+	  if (CHAR_COUNT == 15)
+	    next_command <= LINE2;
+	// Return to first line?
+	  else if ((CHAR_COUNT == 31) || (Next_Char == 8'hFE))
+	    next_command <= RETURN_HOME;
+	  else
+	    next_command <= Print_String;
+	end
+
+// Set write address to line 2 character 1
+	LINE2:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'hC0;
+	  state <= DROP_LCD_E;
+	  next_command <= Print_String;
+	end
+
+// Return write address to first character postion on line 1
+	RETURN_HOME:
+	begin
+	  LCD_E <= 1'b1;
+	  LCD_RS <= 1'b0;
+	  LCD_RW_INT <= 1'b0;
+	  DATA_BUS_VALUE <= 8'h80;
+	  state <= DROP_LCD_E;
+	  next_command <= Print_String;
+	end
+
+// The next three states occur at the end of each command or data transfer to the LCD
+// Drop LCD E line - falling edge loads inst/data to LCD controller
+	DROP_LCD_E:
+	begin
+	  LCD_E <= 1'b0;
+	  state <= HOLD;
+	end
+// Hold LCD inst/data valid after falling edge of E line				
+	HOLD:
+	begin
+	  state <= next_command;
+	end
+	endcase
+endmodule
+
+/*
+------------------------------------------------------------------- 
+--                        ASCII HEX TABLE
+--  Hex						Low Hex Digit
+-- Value  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+------\----------------------------------------------------------------
+--H  2 |  SP  !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /
+--i  3 |  0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?
+--g  4 |  @   A   B   C   D   E   F   G   H   I   J   K   L   M   N   O
+--h  5 |  P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^   _
+--   6 |  `   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o
+--   7 |  p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~ DEL
+-----------------------------------------------------------------------
+-- Example "A" is row 4 column 1, so hex value is 8'h41"
+-- *see LCD Controller's Datasheet for other graphics characters available
+*/
+
+module LCD_display_string(index,out,choice,hex3_Num2,hex2_Num2,hex1_Num2,hex0_Num2,hex3_Num1,hex2_Num1,hex1_Num1,hex0_Num1);
+	input [4:0] index;
+	input [3:0] hex3_Num2,hex2_Num2,hex1_Num2,hex0_Num2,hex3_Num1,hex2_Num1,hex1_Num1,hex0_Num1;
+	input [15:0] choice;
+	output reg [7:0] out;
+
+	// Bloco always com lógica dual (registrador ou mensagem fixa)
+	always @(*) begin
+		// MODO 1: Se o imediato (choice) for 0, exibe o valor do registrador.
+		if (choice == 16'd0) begin
+			case (index)
+				// Linha 1: "VAL: XXXX"
+				5'h00: out <= 8'h56; // V
+				5'h01: out <= 8'h41; // A
+				5'h02: out <= 8'h4C; // L
+				5'h03: out <= 8'h3A; // :
+				5'h04: out <= 8'h20; // Espaço
+
+				// Mostra os 4 dígitos do registrador (convertidos para ASCII)
+				5'h05: out <= {4'h0, hex3_Num1}; // Milhar
+				5'h06: out <= {4'h0, hex2_Num1}; // Centena
+				5'h07: out <= {4'h0, hex1_Num1}; // Dezena
+				5'h08: out <= {4'h0, hex0_Num1}; // Unidade
+
+				// Limpa o resto do display
+				default: out <= 8'h20;
+			endcase
+		end
+		// MODO 2: Se o imediato for > 0, exibe uma mensagem pré-definida.
+		else begin
+			case (choice)
+
+				// Mensagem para choice = 1: "Bem-vindo ao OS_Fer"
+				16'd1: case (index)
+					// Linha 1: "Bem-vindo ao"
+					5'h00: out <= 8'h42; // B
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h6D; // m
+					5'h03: out <= 8'h2D; // -
+					5'h04: out <= 8'h76; // v
+					5'h05: out <= 8'h69; // i
+					5'h06: out <= 8'h6E; // n
+					5'h07: out <= 8'h64; // d
+					5'h08: out <= 8'h6F; // o
+					5'h09: out <= 8'h20; // Espaço
+					5'h0A: out <= 8'h61; // a
+					5'h0B: out <= 8'h6F; // o
+					// Linha 2: "OS_Fer"
+					5'h10: out <= 8'h4F; // O
+					5'h11: out <= 8'h53; // S
+					5'h12: out <= 8'h5F; // _
+					5'h13: out <= 8'h46; // F
+					5'h14: out <= 8'h65; // e
+					5'h15: out <= 8'h72; // r
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice = 2: "Obrigado! By: FerM32bIPS"
+				16'd2: case (index)
+					// Linha 1: "Obrigado! By:"
+					5'h00: out <= 8'h4F; // O
+					5'h01: out <= 8'h62; // b
+					5'h02: out <= 8'h72; // r
+					5'h03: out <= 8'h69; // i
+					5'h04: out <= 8'h67; // g
+					5'h05: out <= 8'h61; // a
+					5'h06: out <= 8'h64; // d
+					5'h07: out <= 8'h6F; // o
+					5'h08: out <= 8'h21; // !
+					5'h09: out <= 8'h20; // Espaço
+					5'h0A: out <= 8'h42; // B
+					5'h0B: out <= 8'h79; // y
+					5'h0C: out <= 8'h3A; // :
+					// Linha 2: "   FerM32bIPS   "
+					5'h10: out <= 8'h20; // Espaço
+					5'h11: out <= 8'h20; // Espaço
+					5'h12: out <= 8'h20; // Espaço
+					5'h13: out <= 8'h46; // F
+					5'h14: out <= 8'h65; // e
+					5'h15: out <= 8'h72; // r
+					5'h16: out <= 8'h4D; // M
+					5'h17: out <= 8'h33; // 3
+					5'h18: out <= 8'h32; // 2
+					5'h19: out <= 8'h62; // b
+					5'h1A: out <= 8'h49; // I
+					5'h1B: out <= 8'h50; // P
+					5'h1C: out <= 8'h53; // S
+					5'h1D: out <= 8'h20; // Espaço
+					5'h1E: out <= 8'h20; // Espaço
+					5'h1F: out <= 8'h20; // Espaço
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice = 3: "Selecione processo 1-10"
+				16'd3: case (index)
+					// Linha 1: "Selecione"
+					5'h00: out <= 8'h53; // S
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h6C; // l
+					5'h03: out <= 8'h65; // e
+					5'h04: out <= 8'h63; // c
+					5'h05: out <= 8'h69; // i
+					5'h06: out <= 8'h6F; // o
+					5'h07: out <= 8'h6E; // n
+					5'h08: out <= 8'h65; // e
+					// Linha 2: "processo 1-10"
+					5'h10: out <= 8'h70; // p
+					5'h11: out <= 8'h72; // r
+					5'h12: out <= 8'h6F; // o
+					5'h13: out <= 8'h63; // c
+					5'h14: out <= 8'h65; // e
+					5'h15: out <= 8'h73; // s
+					5'h16: out <= 8'h73; // s
+					5'h17: out <= 8'h6F; // o
+					5'h18: out <= 8'h20; // Espaço
+					5'h19: out <= 8'h31; // 1
+					5'h1A: out <= 8'h2D; // -
+					5'h1B: out <= 8'h31; // 1
+					5'h1C: out <= 8'h30; // 0
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice = 4: "Executando..."
+				16'd4: case (index)
+					// Linha 1: "Executando..."
+					5'h00: out <= 8'h45; // E
+					5'h01: out <= 8'h78; // x
+					5'h02: out <= 8'h65; // e
+					5'h03: out <= 8'h63; // c
+					5'h04: out <= 8'h75; // u
+					5'h05: out <= 8'h74; // t
+					5'h06: out <= 8'h61; // a
+					5'h07: out <= 8'h6E; // n
+					5'h08: out <= 8'h64; // d
+					5'h09: out <= 8'h6F; // o
+					5'h0A: out <= 8'h2E; // .
+					5'h0B: out <= 8'h2E; // .
+					5'h0C: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice 9: "Estou aqui!"
+				16'd9: case (index)
+					// Linha 1: "Estou"
+					5'h00: out <= 8'h45; // E
+					5'h01: out <= 8'h73; // s
+					5'h02: out <= 8'h74; // t
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h75; // u
+					// Linha 2: "aqui!"
+					5'h10: out <= 8'h61; // a
+					5'h11: out <= 8'h71; // q
+					5'h12: out <= 8'h75; // u
+					5'h13: out <= 8'h69; // i
+					5'h14: out <= 8'h21; // !
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice 5: "Interrupcao... Aguarde..."
+				16'd5: case (index)
+					// Linha 1: "Interrupcao..."
+					5'h00: out <= 8'h49; // I
+					5'h01: out <= 8'h6E; // n
+					5'h02: out <= 8'h74; // t
+					5'h03: out <= 8'h65; // e
+					5'h04: out <= 8'h72; // r
+					5'h05: out <= 8'h72; // r
+					5'h06: out <= 8'h75; // u
+					5'h07: out <= 8'h70; // p
+					5'h08: out <= 8'h63; // c
+					5'h09: out <= 8'h61; // a
+					5'h0A: out <= 8'h6F; // o
+					5'h0B: out <= 8'h2E; // .
+					5'h0C: out <= 8'h2E; // .
+					5'h0D: out <= 8'h2E; // .
+					// Linha 2: "Aguarde..."
+					5'h10: out <= 8'h41; // A
+					5'h11: out <= 8'h67; // g
+					5'h12: out <= 8'h75; // u
+					5'h13: out <= 8'h61; // a
+					5'h14: out <= 8'h72; // r
+					5'h15: out <= 8'h64; // d
+					5'h16: out <= 8'h65; // e
+					5'h17: out <= 8'h2E; // .
+					5'h18: out <= 8'h2E; // .
+					5'h19: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice 6: "Escolha apenas: 1-PM 2-NPM"
+				16'd6: case (index)
+					// Linha 1: "Escolha apenas:"
+					5'h00: out <= 8'h45; // E
+					5'h01: out <= 8'h73; // s
+					5'h02: out <= 8'h63; // c
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h6C; // l
+					5'h05: out <= 8'h68; // h
+					5'h06: out <= 8'h61; // a
+					5'h07: out <= 8'h20; // Espaço
+					5'h08: out <= 8'h61; // a
+					5'h09: out <= 8'h70; // p
+					5'h0A: out <= 8'h65; // e
+					5'h0B: out <= 8'h6E; // n
+					5'h0C: out <= 8'h61; // a
+					5'h0D: out <= 8'h73; // s
+					5'h0E: out <= 8'h3A; // :
+					// Linha 2: "1-PM 2-NPM"
+					5'h10: out <= 8'h31; // 1
+					5'h11: out <= 8'h2D; // -
+					5'h12: out <= 8'h50; // P
+					5'h13: out <= 8'h4D; // M
+					5'h14: out <= 8'h20; // Espaço
+					5'h15: out <= 8'h32; // 2
+					5'h16: out <= 8'h2D; // -
+					5'h17: out <= 8'h4E; // N
+					5'h18: out <= 8'h50; // P
+					5'h19: out <= 8'h4D; // M
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice 7: Modo Preemptivo Escolhido
+				16'd7: case (index)
+					// Linha 1: "Modo Preemptivo"
+					5'h00: out <= 8'h4D; // M
+					5'h01: out <= 8'h6F; // o
+					5'h02: out <= 8'h64; // d
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h20; // Espaço
+					5'h05: out <= 8'h50; // P
+					5'h06: out <= 8'h72; // r
+					5'h07: out <= 8'h65; // e
+					5'h08: out <= 8'h65; // e
+					5'h09: out <= 8'h6D; // m
+					5'h0A: out <= 8'h70; // p
+					5'h0B: out <= 8'h74; // t
+					5'h0C: out <= 8'h69; // i
+					5'h0D: out <= 8'h76; // v
+					5'h0E: out <= 8'h6F; // o
+					// Linha 2: "Escolhido"
+					5'h10: out <= 8'h45; // E
+					5'h11: out <= 8'h73; // s
+					5'h12: out <= 8'h63; // c
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h6C; // l
+					5'h15: out <= 8'h68; // h
+					5'h16: out <= 8'h69; // i
+					5'h17: out <= 8'h64; // d
+					5'h18: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				// Mensagem para choice 8: Modo Nao-Preemptivo Escolhido
+				16'd8: case (index)
+					// Linha 1: "Modo Nao-Preemp"
+					5'h00: out <= 8'h4D; // M
+					5'h01: out <= 8'h6F; // o
+					5'h02: out <= 8'h64; // d
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h20; // Espaço
+					5'h05: out <= 8'h4E; // N
+					5'h06: out <= 8'h61; // a
+					5'h07: out <= 8'h6F; // o
+					5'h08: out <= 8'h2D; // -
+					5'h09: out <= 8'h50; // P
+					5'h0A: out <= 8'h72; // r
+					5'h0B: out <= 8'h65; // e
+					5'h0C: out <= 8'h65; // e
+					5'h0D: out <= 8'h6D; // m
+					5'h0E: out <= 8'h70; // p
+					// Linha 2: "tivo Escolhido"
+					5'h10: out <= 8'h74; // t
+					5'h11: out <= 8'h69; // i
+					5'h12: out <= 8'h76; // v
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h20; // Espaço
+					5'h15: out <= 8'h45; // E
+					5'h16: out <= 8'h73; // s
+					5'h17: out <= 8'h63; // c
+					5'h18: out <= 8'h6F; // o
+					5'h19: out <= 8'h6C; // l
+					5'h1A: out <= 8'h68; // h
+					5'h1B: out <= 8'h69; // i
+					5'h1C: out <= 8'h64; // d
+					5'h1D: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				// ===========================================
+				// ============ mensagens da BIOS ============
+				// ===========================================
+
+				/* Inicialização das variáveis SO */
+				16'd10: case (index)
+					// Linha 1: "Inicializacao"
+					5'h00: out <= 8'h49; // I
+					5'h01: out <= 8'h6E; // n
+					5'h02: out <= 8'h69; // i
+					5'h03: out <= 8'h63; // c
+					5'h04: out <= 8'h69; // i
+					5'h05: out <= 8'h61; // a
+					5'h06: out <= 8'h6C; // l
+					5'h07: out <= 8'h69; // i
+					5'h08: out <= 8'h7A; // z
+					5'h09: out <= 8'h61; // a
+					5'h0A: out <= 8'h63; // c
+					5'h0B: out <= 8'h61; // a
+					5'h0C: out <= 8'h6F; // o
+					// Linha 2: "das variaveis SO"
+					5'h10: out <= 8'h64; // d
+					5'h11: out <= 8'h61; // a
+					5'h12: out <= 8'h73; // s
+					5'h13: out <= 8'h20; // Espaço
+					5'h14: out <= 8'h76; // v
+					5'h15: out <= 8'h61; // a
+					5'h16: out <= 8'h72; // r
+					5'h17: out <= 8'h69; // i
+					5'h18: out <= 8'h61; // a
+					5'h19: out <= 8'h76; // v
+					5'h1A: out <= 8'h65; // e
+					5'h1B: out <= 8'h69; // i
+					5'h1C: out <= 8'h73; // s
+					5'h1D: out <= 8'h20; // Espaço
+					5'h1E: out <= 8'h53; // S
+					5'h1F: out <= 8'h4F; // O
+					default: out <= 8'h20;
+				endcase
+
+				/* Quantos programas? */
+				16'd11: case (index)
+					// Linha 1: "Quantos"
+					5'h00: out <= 8'h51; // Q
+					5'h01: out <= 8'h75; // u
+					5'h02: out <= 8'h61; // a
+					5'h03: out <= 8'h6E; // n
+					5'h04: out <= 8'h74; // t
+					5'h05: out <= 8'h6F; // o
+					5'h06: out <= 8'h73; // s
+					// Linha 2: "programas?"
+					5'h10: out <= 8'h70; // p
+					5'h11: out <= 8'h72; // r
+					5'h12: out <= 8'h6F; // o
+					5'h13: out <= 8'h67; // g
+					5'h14: out <= 8'h72; // r
+					5'h15: out <= 8'h61; // a
+					5'h16: out <= 8'h6D; // m
+					5'h17: out <= 8'h61; // a
+					5'h18: out <= 8'h73; // s
+					5'h19: out <= 8'h3F; // ?
+					default: out <= 8'h20;
+				endcase
+
+				/* Escolha os IDs em ordem */
+				16'd12: case (index)
+					// Linha 1: "Escolha os IDs"
+					5'h00: out <= 8'h45; // E
+					5'h01: out <= 8'h73; // s
+					5'h02: out <= 8'h63; // c
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h6C; // l
+					5'h05: out <= 8'h68; // h
+					5'h06: out <= 8'h61; // a
+					5'h07: out <= 8'h20; // Espaço
+					5'h08: out <= 8'h6F; // o
+					5'h09: out <= 8'h73; // s
+					5'h0A: out <= 8'h20; // Espaço
+					5'h0B: out <= 8'h49; // I
+					5'h0C: out <= 8'h44; // D
+					5'h0D: out <= 8'h73; // s
+					// Linha 2: "em ordem"
+					5'h10: out <= 8'h65; // e
+					5'h11: out <= 8'h6D; // m
+					5'h12: out <= 8'h20; // Espaço
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h72; // r
+					5'h15: out <= 8'h64; // d
+					5'h16: out <= 8'h65; // e
+					5'h17: out <= 8'h6D; // m
+					default: out <= 8'h20;
+				endcase
+
+				/* Repetido, escolha outro */
+				16'd13: case (index)
+					// Linha 1: "Repetido,"
+					5'h00: out <= 8'h52; // R
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h70; // p
+					5'h03: out <= 8'h65; // e
+					5'h04: out <= 8'h74; // t
+					5'h05: out <= 8'h69; // i
+					5'h06: out <= 8'h64; // d
+					5'h07: out <= 8'h6F; // o
+					5'h08: out <= 8'h2C; // ,
+					// Linha 2: "escolha outro"
+					5'h10: out <= 8'h65; // e
+					5'h11: out <= 8'h73; // s
+					5'h12: out <= 8'h63; // c
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h6C; // l
+					5'h15: out <= 8'h68; // h
+					5'h16: out <= 8'h61; // a
+					5'h17: out <= 8'h20; // Espaço
+					5'h18: out <= 8'h6F; // o
+					5'h19: out <= 8'h75; // u
+					5'h1A: out <= 8'h74; // t
+					5'h1B: out <= 8'h72; // r
+					5'h1C: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				/* Fim do Modo Preemptivo */
+				16'd15: case (index)
+					// Linha 1: "Fim do Modo"
+					5'h00: out <= 8'h46; // F
+					5'h01: out <= 8'h69; // i
+					5'h02: out <= 8'h6D; // m
+					5'h03: out <= 8'h20; // Espaço
+					5'h04: out <= 8'h64; // d
+					5'h05: out <= 8'h6F; // o
+					5'h06: out <= 8'h20; // Espaço
+					5'h07: out <= 8'h4D; // M
+					5'h08: out <= 8'h6F; // o
+					5'h09: out <= 8'h64; // d
+					5'h0A: out <= 8'h6F; // o
+					// Linha 2: "Preemptivo"
+					5'h10: out <= 8'h50; // P
+					5'h11: out <= 8'h72; // r
+					5'h12: out <= 8'h65; // e
+					5'h13: out <= 8'h65; // e
+					5'h14: out <= 8'h6D; // m
+					5'h15: out <= 8'h70; // p
+					5'h16: out <= 8'h74; // t
+					5'h17: out <= 8'h69; // i
+					5'h18: out <= 8'h76; // v
+					5'h19: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				/* Setando o quantum... */
+				16'd16: case (index)
+					// Linha 1: "Setando o"
+					5'h00: out <= 8'h53; // S
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h74; // t
+					5'h03: out <= 8'h61; // a
+					5'h04: out <= 8'h6E; // n
+					5'h05: out <= 8'h64; // d
+					5'h06: out <= 8'h6F; // o
+					5'h07: out <= 8'h20; // Espaço
+					5'h08: out <= 8'h6F; // o
+					// Linha 2: "quantum..."
+					5'h10: out <= 8'h71; // q
+					5'h11: out <= 8'h75; // u
+					5'h12: out <= 8'h61; // a
+					5'h13: out <= 8'h6E; // n
+					5'h14: out <= 8'h74; // t
+					5'h15: out <= 8'h75; // u
+					5'h16: out <= 8'h6D; // m
+					5'h17: out <= 8'h2E; // .
+					5'h18: out <= 8'h2E; // .
+					5'h19: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Executando o modo preemptivo */
+				16'd17: case (index)
+					// Linha 1: "Executando o"
+					5'h00: out <= 8'h45; // E
+					5'h01: out <= 8'h78; // x
+					5'h02: out <= 8'h65; // e
+					5'h03: out <= 8'h63; // c
+					5'h04: out <= 8'h75; // u
+					5'h05: out <= 8'h74; // t
+					5'h06: out <= 8'h61; // a
+					5'h07: out <= 8'h6E; // n
+					5'h08: out <= 8'h64; // d
+					5'h09: out <= 8'h6F; // o
+					5'h0A: out <= 8'h20; // Espaço
+					// Linha 2: "modo preemptivo"
+					5'h10: out <= 8'h6D; // m
+					5'h11: out <= 8'h6F; // o
+					5'h12: out <= 8'h64; // d
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h20; // Espaço
+					5'h15: out <= 8'h70; // p
+					5'h16: out <= 8'h72; // r
+					5'h17: out <= 8'h65; // e
+					5'h18: out <= 8'h65; // e
+					5'h19: out <= 8'h6D; // m
+					5'h1A: out <= 8'h70; // p
+					5'h1B: out <= 8'h74; // t
+					5'h1C: out <= 8'h69; // i
+					5'h1D: out <= 8'h76; // v
+					5'h1E: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				/* Salvando contexto... */
+				16'd18: case (index)
+					// Linha 1: "Salvando"
+					5'h00: out <= 8'h53; // S
+					5'h01: out <= 8'h61; // a
+					5'h02: out <= 8'h6C; // l
+					5'h03: out <= 8'h76; // v
+					5'h04: out <= 8'h61; // a
+					5'h05: out <= 8'h6E; // n
+					5'h06: out <= 8'h64; // d
+					5'h07: out <= 8'h6F; // o
+					// Linha 2: "contexto..."
+					5'h10: out <= 8'h63; // c
+					5'h11: out <= 8'h6F; // o
+					5'h12: out <= 8'h6E; // n
+					5'h13: out <= 8'h74; // t
+					5'h14: out <= 8'h65; // e
+					5'h15: out <= 8'h78; // x
+					5'h16: out <= 8'h74; // t
+					5'h17: out <= 8'h6F; // o
+					5'h18: out <= 8'h2E; // .
+					5'h19: out <= 8'h2E; // .
+					5'h1A: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Setando bases... */
+				16'd19: case (index)
+					// Linha 1: "Setando"
+					5'h00: out <= 8'h53; // S
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h74; // t
+					5'h03: out <= 8'h61; // a
+					5'h04: out <= 8'h6E; // n
+					5'h05: out <= 8'h64; // d
+					5'h06: out <= 8'h6F; // o
+					// Linha 2: "bases..."
+					5'h10: out <= 8'h62; // b
+					5'h11: out <= 8'h61; // a
+					5'h12: out <= 8'h73; // s
+					5'h13: out <= 8'h65; // e
+					5'h14: out <= 8'h73; // s
+					5'h15: out <= 8'h2E; // .
+					5'h16: out <= 8'h2E; // .
+					5'h17: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Restaurando contexto... */
+				16'd20: case (index)
+					// Linha 1: "Restaurando"
+					5'h00: out <= 8'h52; // R
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h73; // s
+					5'h03: out <= 8'h74; // t
+					5'h04: out <= 8'h61; // a
+					5'h05: out <= 8'h75; // u
+					5'h06: out <= 8'h72; // r
+					5'h07: out <= 8'h61; // a
+					5'h08: out <= 8'h6E; // n
+					5'h09: out <= 8'h64; // d
+					5'h0A: out <= 8'h6F; // o
+					// Linha 2: "contexto..."
+					5'h10: out <= 8'h63; // c
+					5'h11: out <= 8'h6F; // o
+					5'h12: out <= 8'h6E; // n
+					5'h13: out <= 8'h74; // t
+					5'h14: out <= 8'h65; // e
+					5'h15: out <= 8'h78; // x
+					5'h16: out <= 8'h74; // t
+					5'h17: out <= 8'h6F; // o
+					5'h18: out <= 8'h2E; // .
+					5'h19: out <= 8'h2E; // .
+					5'h1A: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Saltando para o processo... */
+				16'd21: case (index)
+					// Linha 1: "Saltando para"
+					5'h00: out <= 8'h53; // S
+					5'h01: out <= 8'h61; // a
+					5'h02: out <= 8'h6C; // l
+					5'h03: out <= 8'h74; // t
+					5'h04: out <= 8'h61; // a
+					5'h05: out <= 8'h6E; // n
+					5'h06: out <= 8'h64; // d
+					5'h07: out <= 8'h6F; // o
+					5'h08: out <= 8'h20; // Espaço
+					5'h09: out <= 8'h70; // p
+					5'h0A: out <= 8'h61; // a
+					5'h0B: out <= 8'h72; // r
+					5'h0C: out <= 8'h61; // a
+					// Linha 2: "o processo..."
+					5'h10: out <= 8'h6F; // o
+					5'h11: out <= 8'h20; // Espaço
+					5'h12: out <= 8'h70; // p
+					5'h13: out <= 8'h72; // r
+					5'h14: out <= 8'h6F; // o
+					5'h15: out <= 8'h63; // c
+					5'h16: out <= 8'h65; // e
+					5'h17: out <= 8'h73; // s
+					5'h18: out <= 8'h73; // s
+					5'h19: out <= 8'h6F; // o
+					5'h1A: out <= 8'h2E; // .
+					5'h1B: out <= 8'h2E; // .
+					5'h1C: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Voltando ao SO... */
+				16'd22: case (index)
+					// Linha 1: "Voltando ao"
+					5'h00: out <= 8'h56; // V
+					5'h01: out <= 8'h6F; // o
+					5'h02: out <= 8'h6C; // l
+					5'h03: out <= 8'h74; // t
+					5'h04: out <= 8'h61; // a
+					5'h05: out <= 8'h6E; // n
+					5'h06: out <= 8'h64; // d
+					5'h07: out <= 8'h6F; // o
+					5'h08: out <= 8'h20; // Espaço
+					5'h09: out <= 8'h61; // a
+					5'h0A: out <= 8'h6F; // o
+					// Linha 2: "SO..."
+					5'h10: out <= 8'h53; // S
+					5'h11: out <= 8'h4F; // O
+					5'h12: out <= 8'h2E; // .
+					5'h13: out <= 8'h2E; // .
+					5'h14: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Interrupção de Timer */
+				16'd23: case (index)
+					// Linha 1: "Interrupcao"
+					5'h00: out <= 8'h49; // I
+					5'h01: out <= 8'h6E; // n
+					5'h02: out <= 8'h74; // t
+					5'h03: out <= 8'h65; // e
+					5'h04: out <= 8'h72; // r
+					5'h05: out <= 8'h72; // r
+					5'h06: out <= 8'h75; // u
+					5'h07: out <= 8'h70; // p
+					5'h08: out <= 8'h63; // c
+					5'h09: out <= 8'h61; // a
+					5'h0A: out <= 8'h6F; // o
+					// Linha 2: "de Timer..."
+					5'h10: out <= 8'h64; // d
+					5'h11: out <= 8'h65; // e
+					5'h12: out <= 8'h20; // Espaço
+					5'h13: out <= 8'h54; // T
+					5'h14: out <= 8'h69; // i
+					5'h15: out <= 8'h6D; // m
+					5'h16: out <= 8'h65; // e
+					5'h17: out <= 8'h72; // r
+					5'h18: out <= 8'h2E; // .
+					5'h19: out <= 8'h2E; // .
+					5'h1A: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+			    /* Interrupção de HALT */
+				16'd24: case (index)
+					// Linha 1: "Interrupcao"
+					5'h00: out <= 8'h49; // I
+					5'h01: out <= 8'h6E; // n
+					5'h02: out <= 8'h74; // t
+					5'h03: out <= 8'h65; // e
+					5'h04: out <= 8'h72; // r
+					5'h05: out <= 8'h72; // r
+					5'h06: out <= 8'h75; // u
+					5'h07: out <= 8'h70; // p
+					5'h08: out <= 8'h63; // c
+					5'h09: out <= 8'h61; // a
+					5'h0A: out <= 8'h6F; // o
+					// Linha 2: "de HALT..."
+					5'h10: out <= 8'h64; // d
+					5'h11: out <= 8'h65; // e
+					5'h12: out <= 8'h20; // Espaço
+					5'h13: out <= 8'h48; // H
+					5'h14: out <= 8'h41; // A
+					5'h15: out <= 8'h4C; // L
+					5'h16: out <= 8'h54; // T
+					5'h17: out <= 8'h2E; // .
+					5'h18: out <= 8'h2E; // .
+					5'h19: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Processo Atualizado */
+				16'd25: case (index)
+					// Linha 1: "Processo"
+					5'h00: out <= 8'h50; // P
+					5'h01: out <= 8'h72; // r
+					5'h02: out <= 8'h6F; // o
+					5'h03: out <= 8'h63; // c
+					5'h04: out <= 8'h65; // e
+					5'h05: out <= 8'h73; // s
+					5'h06: out <= 8'h73; // s
+					5'h07: out <= 8'h6F; // o
+					// Linha 2: "Atualizado"
+					5'h10: out <= 8'h41; // A
+					5'h11: out <= 8'h74; // t
+					5'h12: out <= 8'h75; // u
+					5'h13: out <= 8'h61; // a
+					5'h14: out <= 8'h6C; // l
+					5'h15: out <= 8'h69; // i
+					5'h16: out <= 8'h7A; // z
+					5'h17: out <= 8'h61; // a
+					5'h18: out <= 8'h64; // d
+					5'h19: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				/* Programa já executado antes */
+				16'd26: case (index)
+					// Linha 1: "Programa ja"
+					5'h00: out <= 8'h50; // P
+					5'h01: out <= 8'h72; // r
+					5'h02: out <= 8'h6F; // o
+					5'h03: out <= 8'h67; // g
+					5'h04: out <= 8'h72; // r
+					5'h05: out <= 8'h61; // a
+					5'h06: out <= 8'h6D; // m
+					5'h07: out <= 8'h61; // a
+					5'h08: out <= 8'h20; // Espaço
+					5'h09: out <= 8'h6A; // j
+					5'h0A: out <= 8'h61; // a
+					// Linha 2: "executado antes"
+					5'h10: out <= 8'h65; // e
+					5'h11: out <= 8'h78; // x
+					5'h12: out <= 8'h65; // e
+					5'h13: out <= 8'h63; // c
+					5'h14: out <= 8'h75; // u
+					5'h15: out <= 8'h74; // t
+					5'h16: out <= 8'h61; // a
+					5'h17: out <= 8'h64; // d
+					5'h18: out <= 8'h6F; // o
+					5'h19: out <= 8'h20; // Espaço
+					5'h1A: out <= 8'h61; // a
+					5'h1B: out <= 8'h6E; // n
+					5'h1C: out <= 8'h74; // t
+					5'h1D: out <= 8'h65; // e
+					default: out <= 8'h20;
+				endcase
+
+				/* Primeira vez */
+				16'd27: case (index)
+					// Linha 1: "Primeira"
+					5'h00: out <= 8'h50; // P
+					5'h01: out <= 8'h72; // r
+					5'h02: out <= 8'h69; // i
+					5'h03: out <= 8'h6D; // m
+					5'h04: out <= 8'h65; // e
+					5'h05: out <= 8'h69; // i
+					5'h06: out <= 8'h72; // r
+					5'h07: out <= 8'h61; // a
+					// Linha 2: "vez"
+					5'h10: out <= 8'h76; // v
+					5'h11: out <= 8'h65; // e
+					5'h12: out <= 8'h7A; // z
+					default: out <= 8'h20;
+				endcase
+
+				/* Resetando flags */
+				16'd28: case (index)
+					// Linha 1: "Resetando"
+					5'h00: out <= 8'h52; // R
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h73; // s
+					5'h03: out <= 8'h65; // e
+					5'h04: out <= 8'h74; // t
+					5'h05: out <= 8'h61; // a
+					5'h06: out <= 8'h6E; // n
+					5'h07: out <= 8'h64; // d
+					5'h08: out <= 8'h6F; // o
+					// Linha 2: "flags..."
+					5'h10: out <= 8'h66; // f
+					5'h11: out <= 8'h6C; // l
+					5'h12: out <= 8'h61; // a
+					5'h13: out <= 8'h67; // g
+					5'h14: out <= 8'h73; // s
+					5'h15: out <= 8'h2E; // .
+					5'h16: out <= 8'h2E; // .
+					5'h17: out <= 8'h2E; // .
+					default: out <= 8'h20;
+				endcase
+
+				/* Escolha inválida */
+				16'd29: case (index)
+					// Linha 1: "Escolha"
+					5'h00: out <= 8'h45; // E
+					5'h01: out <= 8'h73; // s
+					5'h02: out <= 8'h63; // c
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h6C; // l
+					5'h05: out <= 8'h68; // h
+					5'h06: out <= 8'h61; // a
+					// Linha 2: "invalida"
+					5'h10: out <= 8'h69; // i
+					5'h11: out <= 8'h6E; // n
+					5'h12: out <= 8'h76; // v
+					5'h13: out <= 8'h61; // a
+					5'h14: out <= 8'h6C; // l
+					5'h15: out <= 8'h69; // i
+					5'h16: out <= 8'h64; // d
+					5'h17: out <= 8'h61; // a
+					default: out <= 8'h20;
+				endcase
+
+				// Se um imediato desconhecido for passado, o display ficará em branco.
+				default: out <= 8'h20;
+
+			endcase
+		end
+	end
+endmodule
+
+// module LCD_display_string(index,out,choice,hex3_Num2,hex2_Num2,hex1_Num2,hex0_Num2,hex3_Num1,hex2_Num1,hex1_Num1,hex0_Num1);
+// input [4:0] index;
+// input [3:0] hex3_Num2,hex2_Num2,hex1_Num2,hex0_Num2,hex3_Num1,hex2_Num1,hex1_Num1,hex0_Num1;
+// input [15:0] choice;
+// output reg [7:0] out;
+// // ASCII hex values for LCD Display
+// // Enter Live Hex Data Values from hardware here
+// // LCD DISPLAYS THE FOLLOWING:
+// //----------------------------
+// //| Count=XX                  |
+// //| DE2                       |
+// //----------------------------
+// // Line 1
+//    always 
+	
+// 	case (choice) 
+	
+// 	16'd0: 
+// 	begin
+// 		// Escreva aqui: "Sistema esta\n executando..."
+// 		case (index)
+// 			5'h00: out <= 8'h53;//S
+// 			5'h01: out <= 8'h69;//i
+// 			5'h02: out <= 8'h73;//s
+// 			5'h03: out <= 8'h74;//t
+// 			5'h04: out <= 8'h65;//e
+// 			5'h05: out <= 8'h6D;//m
+// 			5'h06: out <= 8'h61;//a
+// 			5'h07: out <= 8'h20;//Espaco
+// 			5'h08: out <= 8'h65;//e
+// 			5'h09: out <= 8'h73;//s
+// 			5'h0A: out <= 8'h74;//t
+// 			5'h0B: out <= 8'h61;//a
+// 			5'h0C: out <= 8'h20;//Espaco
+// 			5'h0D: out <= 8'h20;//Espaco
+// 			5'h0E: out <= 8'h20;//Espaco
+// 		// Line 2
+// 			5'h10: out <= 8'h65;//e
+// 			5'h11: out <= 8'h78;//x
+// 			5'h12: out <= 8'h65;//e
+// 			5'h13: out <= 8'h63;//c
+// 			5'h14: out <= 8'h75;//u
+// 			5'h15: out <= 8'h74;//t
+// 			5'h16: out <= 8'h61;//a
+// 			5'h17: out <= 8'h6E;//n
+// 			5'h18: out <= 8'h64;//d
+// 			5'h19: out <= 8'h6F;//o
+// 			5'h1A: out <= 8'h2E;//.
+// 			5'h1B: out <= 8'h2E;//.
+// 			5'h1C: out <= 8'h2E;//.
+// 			default: out <= 8'h20;
+			
+// 		endcase
+// 	end
+// 	16'd1:
+// 	begin
+// 		case (index)
+// 			// Escreva aqui: "1- Um processo 2- Mais proc's"
+// 			5'h00: out <= 8'h31;//0
+// 			5'h01: out <= 8'h2D;//-
+// 			5'h02: out <= 8'h20;//Espaco
+// 			5'h03: out <= 8'h55;//U
+// 			5'h04: out <= 8'h6D;//m
+// 			5'h05: out <= 8'h20;//Espaco
+// 			5'h06: out <= 8'h70;//p
+// 			5'h07: out <= 8'h72;//r
+// 			5'h08: out <= 8'h6F;//o
+// 			5'h09: out <= 8'h63;//c
+// 			5'h0A: out <= 8'h65;//e
+// 			5'h0B: out <= 8'h73;//s
+// 			5'h0C: out <= 8'h73;//s
+// 			5'h0D: out <= 8'h6F;//o
+// 			5'h0E: out <= 8'h20;//Espaco
+// 		// Line 2
+// 			5'h10: out <= 8'h32;//1
+// 			5'h11: out <= 8'h2D;//-
+// 			5'h12: out <= 8'h20;//Espaco
+// 			5'h13: out <= 8'h4D;//M
+// 			5'h14: out <= 8'h61;//a
+// 			5'h15: out <= 8'h69;//i
+// 			5'h16: out <= 8'h73;//s
+// 			5'h17: out <= 8'h20;//Espaco
+// 			5'h18: out <= 8'h70;//p
+// 			5'h19: out <= 8'h72;//r
+// 			5'h1A: out <= 8'h6F;//o
+// 			5'h1B: out <= 8'h63;//c
+// 			5'h1C: out <= 8'h27;//'
+// 			5'h1D: out <= 8'h73;//s
+
+// 			default: out <= 8'h20;
+// 		 endcase
+// 	end
+// 	16'd2:
+// 	begin
+// 		case (index)
+// 			// Escreva aqui: "Selecione proc. [1 a 10]"
+// 			5'h00: out <= 8'h53;//S
+// 			5'h01: out <= 8'h65;//e
+// 			5'h02: out <= 8'h6C;//l
+// 			5'h03: out <= 8'h65;//e
+// 			5'h04: out <= 8'h63;//c
+// 			5'h05: out <= 8'h69;//i
+// 			5'h06: out <= 8'h6F;//o
+// 			5'h07: out <= 8'h6E;//n
+// 			5'h08: out <= 8'h65;//e
+// 			5'h09: out <= 8'h20;//Espaco
+// 			5'h0A: out <= 8'h70;//p
+// 			5'h0B: out <= 8'h72;//r
+// 			5'h0C: out <= 8'h6F;//o
+// 			5'h0D: out <= 8'h63;//c
+// 			5'h0E: out <= 8'h2E;//.
+// 		// Line 2
+// 			5'h12: out <= 8'h5B;//[
+// 			5'h13: out <= 8'h31;//1
+// 			5'h14: out <= 8'h20;//Espaco
+// 			5'h15: out <= 8'h61;//a
+// 			5'h16: out <= 8'h20;//Espaco
+// 			5'h17: out <= 8'h31;//1
+// 			5'h18: out <= 8'h30;//0
+// 			5'h19: out <= 8'h5D;//]
+// 			5'h1A: out <= 8'h20;//Espaco
+
+// 			default: out <= 8'h20;
+// 		 endcase
+// 	end
+			
+// 	16'd3:
+// 	begin 
+// 		case (index)
+// 			// Escreva aqui: "Interrupcao... Aguarde..."
+// 			5'h00: out <= 8'h49;//I
+// 			5'h01: out <= 8'h6E;//n
+// 			5'h02: out <= 8'h74;//t
+// 			5'h03: out <= 8'h65;//e
+// 			5'h04: out <= 8'h72;//r
+// 			5'h05: out <= 8'h72;//r
+// 			5'h06: out <= 8'h75;//u
+// 			5'h07: out <= 8'h70;//p
+// 			5'h08: out <= 8'h63;//c
+// 			5'h09: out <= 8'h61;//a
+// 			5'h0A: out <= 8'h6F;//o
+// 			5'h0B: out <= 8'h2E;//.
+// 			5'h0C: out <= 8'h2E;//.
+// 			5'h0D: out <= 8'h2E;//.
+// 			5'h0E: out <= 8'h20;//Espaco
+// 		// Line 2
+// 			5'h10: out <= 8'h41;//A
+// 			5'h11: out <= 8'h67;//g
+// 			5'h12: out <= 8'h75;//u
+// 			5'h13: out <= 8'h61;//a
+// 			5'h14: out <= 8'h72;//r
+// 			5'h15: out <= 8'h64;//d
+// 			5'h16: out <= 8'h65;//e
+// 			5'h17: out <= 8'h2E;//.
+// 			5'h18: out <= 8'h2E;//.
+// 			5'h19: out <= 8'h2E;//.
+// 			5'h1A: out <= 8'h20;//Espaco
+// 			default: out <= 8'h20;
+
+// 		 endcase
+// 	end
+
+// 	16'd4:
+// 	begin
+// 		case (index)
+// 		// Escreva aqui: "Processo ## Executando..."
+// 		5'h00: out <= 8'h50;//P
+// 		5'h01: out <= 8'h72;//r
+// 		5'h02: out <= 8'h6F;//o
+// 		5'h03: out <= 8'h63;//c
+// 		5'h04: out <= 8'h65;//e
+// 		5'h05: out <= 8'h73;//s
+// 		5'h06: out <= 8'h73;//s
+// 		5'h07: out <= 8'h6F;//o
+// 		5'h08: out <= 8'h20;//Espaco
+// 		5'h09: out <= 8'h23;//#
+// 		5'h0A: out <= {4'h0,hex1_Num1};
+// 		5'h0B: out <= {4'h0,hex0_Num1};
+// 		// Line 2
+// 		5'h10: out <= 8'h45;//E
+// 		5'h11: out <= 8'h78;//x
+// 		5'h12: out <= 8'h65;//e
+// 		5'h13: out <= 8'h63;//c
+// 		5'h14: out <= 8'h75;//u
+// 		5'h15: out <= 8'h74;//t
+// 		5'h16: out <= 8'h61;//a
+// 		5'h17: out <= 8'h6E;//n
+// 		5'h18: out <= 8'h64;//d
+// 		5'h19: out <= 8'h6F;//o
+// 		5'h1A: out <= 8'h2E;//.
+// 		5'h1B: out <= 8'h2E;//.
+// 		5'h1C: out <= 8'h2E;//.
+// 		default: out <= 8'h20;
+// 		endcase
+// 	end
+	
+// 	16'd5: // Nova mensagem para "Processo Concluido"
+// 	begin
+// 		case (index)
+// 		// Linha 1: "Processo"
+// 		5'h00: out <= 8'h50; // P
+// 		5'h01: out <= 8'h72; // r
+// 		5'h02: out <= 8'h6F; // o
+// 		5'h03: out <= 8'h63; // c
+// 		5'h04: out <= 8'h65; // e
+// 		5'h05: out <= 8'h73; // s
+// 		5'h06: out <= 8'h73; // s
+// 		5'h07: out <= 8'h6F; // o
+		
+// 		// Linha 2: "Concluido!"
+// 		5'h10: out <= 8'h43; // C
+// 		5'h11: out <= 8'h6F; // o
+// 		5'h12: out <= 8'h6E; // n
+// 		5'h13: out <= 8'h63; // c
+// 		5'h14: out <= 8'h6C; // l
+// 		5'h15: out <= 8'h75; // u
+// 		5'h16: out <= 8'h69; // i
+// 		5'h17: out <= 8'h64; // d
+// 		5'h18: out <= 8'h6F; // o
+// 		5'h19: out <= 8'h21; // !
+
+// 		default: out <= 8'h20; // Espaço em branco por padrão
+// 		endcase
+// 	end
+
+// 	endcase
+// endmodule

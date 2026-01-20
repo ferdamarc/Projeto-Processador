@@ -1,0 +1,78 @@
+module modulo_interrupcao #(
+    parameter ADDR_WIDTH = 13  // Largura do endereço do PC (parametrizável)
+)(
+    input halt, // Sinal de parada do processo
+    input clk, // Clock
+    input set, // Sinal para setar o tempo de interrupção
+    input [ADDR_WIDTH-1:0] pc,
+    input [15:0] int_time,
+    output reg int_halt, // Sinal de interrupção
+    output reg int_clk, // Sinal de interrupção
+);
+
+    reg [15:0] timer; // Timer para interrupção (16 bits para suportar int_time completo)
+    reg [15:0] reg_int_time; // Registrador para o tempo de interrupção
+    reg start; // Registrador para o sinal de start
+    //reg int_clk_latch; // Mantém int_clk ativo até ser lido
+
+    initial begin
+        timer = 16'd0;
+        start = 0;
+        int_clk = 0;
+        int_halt = 0;
+        //int_clk_latch = 0;
+    end
+    
+    /* Timer de quantum para Round Robin com preempção
+       - Após set, conta até int_time e gera int_clk=1
+       - Timer para automaticamente após expirar (não é periódico)
+       - SO deve chamar set_interr_timer novamente antes de cada os_jump_to
+    */
+    always @(negedge clk) begin
+        // Configuração do timer
+        if (set) begin
+            timer = 16'd0;
+            start = 1;
+            reg_int_time = int_time;
+            // int_clk_latch = 0;
+        end
+
+        // Contagem do timer (modo quantum único)
+        if (start) begin
+            /*if (int_clk_latch) begin
+                // Interrupção de timer desliga o contador após 1 ciclo
+                int_clk_latch = 0;
+                start = 0;          // ✓ Desliga timer após interrupção de quantum
+            end
+            else begin*/
+                timer = timer + 1;
+                if (timer >= reg_int_time) begin
+                    int_clk = 1;      // Ativa interrupção por 1 ciclo
+                    timer = 16'd0;          // Reseta contador
+                    start = 0;
+                    // start será desligado no próximo ciclo (acima)
+                end
+            //end
+        end
+        else begin
+            int_clk = 0;
+            timer = 16'd0;
+        end
+
+        // Interrupção por halt (desliga o timer imediatamente)
+        if (halt) begin
+            int_halt = 1;
+            start = 0;              // Halt desliga o timer
+            //int_clk_latch = 0;      // Limpa qualquer interrupção pendente
+        end
+        else begin
+            int_halt = 0;
+        end
+        
+        // Saída de interrupção por timer
+        //int_clk = int_clk_latch;
+    end
+
+endmodule
+
+
