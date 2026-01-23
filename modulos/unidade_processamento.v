@@ -14,6 +14,7 @@ module unidade_processamento
 	output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
 
     // Saídas para LEDs e Displays
+	output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
     output [13:0]   led,                 // LEDs para saída de dados e status
     output [6:0]    display1,            // Displays de 7 segmentos
     output [6:0]    display2,
