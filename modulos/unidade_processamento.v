@@ -1,13 +1,13 @@
 module unidade_processamento 
 #(
-    parameter DATA_WIDTH = 32,          // Largura dos dados (padrão: 32 bits)
-    parameter INSTR_ADDR_WIDTH = 13,     // Largura do endereço da ROM/MI (padrão: 13 bits = 8192 posições)
-    parameter DATA_ADDR_WIDTH = 13      // Largura do endereço da RAM/MD (padrão: 13 bits = 8192 posições)
+    parameter DATA_WIDTH = 32,          // Largura dos dados
+    parameter INSTR_ADDR_WIDTH = 13,     // Largura do endereço da ROM/MI
+    parameter DATA_ADDR_WIDTH = 13      // Largura do endereço da RAM/MD
 )
 (
     // Entradas Principais
     input           entrada_clock,       // Clock principal de 50MHz da placa
-    input           botao,               // Botão de entrada para outras funções (ex.: reset)
+    input           botao,               // Botão de entrada para outras funções
     input           botao_continue,      // Novo botão dedicado ao avanço manual (continue)
     input [13:0]    sw,                  // Switches para entrada de dados
 	input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
@@ -33,13 +33,8 @@ module unidade_processamento
     inout  [7:0]    LCD_DATA
 );
 
-  // ========================================================================
   // DECLARAÇÃO DE SINAIS INTERNOS
-  // ========================================================================
-
-  // ------------------------------------------------------------------------
   // Registradores Internos
-  // ------------------------------------------------------------------------
   reg [DATA_WIDTH-1:0] imediato_extendido;
   reg init_done;
   reg [INSTR_ADDR_WIDTH-1:0] novo_valor_pc;
@@ -47,15 +42,11 @@ module unidade_processamento
   reg [INSTR_ADDR_WIDTH-1:0] pc_interrup;
   reg [INSTR_ADDR_WIDTH-1:0] pc_retorno_so;
 
-  // ------------------------------------------------------------------------
   // Clock e Controle
-  // ------------------------------------------------------------------------
   wire clock;
   wire inv_clock;
   
-  // ------------------------------------------------------------------------
   // Sinais da Unidade de Controle
-  // ------------------------------------------------------------------------
   wire reg_write, mem_to_reg, mem_write, alu_src;
   wire reg_dst, pc_funct, control_jump, beq, bne, halt;
   wire out, jal, disp, save_pc;
@@ -65,36 +56,26 @@ module unidade_processamento
   wire [1:0] enable_clock;
   wire [2:0] alu_op;
 
-  // ------------------------------------------------------------------------
   // Sinais da Unidade de Controle da ULA
-  // ------------------------------------------------------------------------
   wire [3:0] control_alu;
   wire jalr, jr;
 
-  // ------------------------------------------------------------------------
   // Sinais da ULA
-  // ------------------------------------------------------------------------
   wire [DATA_WIDTH-1:0] saida_ula;
   wire zero;
 
-  // ------------------------------------------------------------------------
   // Sinais do Banco de Registradores
-  // ------------------------------------------------------------------------
   wire [DATA_WIDTH-1:0] br_dado1, br_dado2;
   wire [DATA_WIDTH-1:0] fp;
   wire [DATA_WIDTH-1:0] offset_base;
   wire [DATA_WIDTH-1:0] s0;  // Saída S0 do banco (não utilizado externamente)
 
-  // ------------------------------------------------------------------------
   // Sinais de Memória
-  // ------------------------------------------------------------------------
   wire [DATA_WIDTH-1:0] dado_memoria_ram;
   wire [DATA_WIDTH-1:0] instrucao;
   wire [DATA_ADDR_WIDTH-1:0] addr_logico;
 
-  // ------------------------------------------------------------------------
   // Sinais de Controle de Fluxo (PC, Branch, Jump)
-  // ------------------------------------------------------------------------
   wire [INSTR_ADDR_WIDTH-1:0] endereco_instrucao;
   wire [INSTR_ADDR_WIDTH-1:0] novo_endereco;
   wire [INSTR_ADDR_WIDTH-1:0] endereco_com_offset;
@@ -102,20 +83,14 @@ module unidade_processamento
   wire control_branch;
   wire pc_funct_final;
 
-  // ------------------------------------------------------------------------
   // Sinais de Interrupção
-  // ------------------------------------------------------------------------
   wire int_halt, int_clk;
 
-  // ------------------------------------------------------------------------
   // Sinais de Entrada/Saída
-  // ------------------------------------------------------------------------
   wire [13:0] resultado_entrada;
   wire saida_botao;
 
-  // ------------------------------------------------------------------------
   // Sinais dos Multiplexadores
-  // ------------------------------------------------------------------------
   wire [DATA_WIDTH-1:0] escolhido_multiplexador_mem_to_reg;
   wire [DATA_WIDTH-1:0] escolhido_multiplexador_alu_src;
   wire [4:0] escolhido_multiplexador_reg_dst;
@@ -127,18 +102,13 @@ module unidade_processamento
   wire [INSTR_ADDR_WIDTH-1:0] escolhido_multiplexador_jump_reg;
   wire [DATA_WIDTH-1:0] escolhido_multiplexador_pc;
 
-  // ========================================================================
   // ASSIGNS
-  // ========================================================================
   assign addr_logico = saida_ula[DATA_ADDR_WIDTH-1:0];
   assign led_loop_status = loop_enable;
   assign inv_clock = ~clock;
   assign pc_funct_final = os_jump_to ? 1'b1 : pc_funct;
 
-  // ========================================================================
   // LÓGICA COMBINACIONAL E SEQUENCIAL
-  // ========================================================================
-  
   // Inicialização de registradores
   initial begin
     init_done = 1'b0;
@@ -165,7 +135,7 @@ module unidade_processamento
     end
 
     if (os_jump_to) begin
-        // Salva automaticamente o PC de retorno (próxima instrução após os_jump_to)
+        // Salva automaticamente o PC+1 de retorno
         pc_retorno_so <= endereco_instrucao + 1;
     end
 
@@ -192,7 +162,7 @@ module unidade_processamento
   end
 
 
-  // Controle do valor do PC (sem tratamento de interrupção - feito no modulo_pc_v2)
+  // Controle do valor do PC (sem tratamento de interrupção)
   always @(*) begin
     // Jump especial do SO - usa registrador de índice 22
     if (os_jump_to) begin
@@ -200,14 +170,12 @@ module unidade_processamento
     end
     // Operação normal
     else begin
-      // Usa endereco_com_offset que já tem o offset base ($24) aplicado
+      // Usa endereco_com_offset que já tem o offset base aplicado
       novo_valor_pc = endereco_com_offset;
     end
   end
 
-  // ========================================================================
   // INSTANCIAÇÃO DOS MÓDULOS
-  // ========================================================================
   modulo_output_v2 exit (
       .valor_saida(escolhido_multiplexador_saida),
       .halt(halt),
@@ -351,10 +319,10 @@ module unidade_processamento
     .clock(clock),
     .pc_funct(pc_funct_final),
     .instrucao_modificada(novo_valor_pc),
-    .halt(int_halt),       // int_halt: interrupção por HALT
-    .int_clk(int_clk),     // int_clk: interrupção por timer (Round Robin)
+    .halt(int_halt),
+    .int_clk(int_clk),
     .loop_enable(loop_enable),
-    .pc_retorno_so(pc_retorno_so),  // Endereço de retorno ao SO
+    .pc_retorno_so(pc_retorno_so),
     .instrucao(endereco_instrucao)
 );
 
