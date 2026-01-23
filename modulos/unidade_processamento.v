@@ -448,8 +448,6 @@ module unidade_processamento
       escolhido_multiplexador_jump_reg
   );
 
-  // Módulo que aplica o offset base ($24) aos endereços de jump e branch
-  // Isso permite que programas paginados na IM funcionem corretamente
   modulo_offset_base #(
       .ADDR_WIDTH(INSTR_ADDR_WIDTH),
       .DATA_WIDTH(DATA_WIDTH)
