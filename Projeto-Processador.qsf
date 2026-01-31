@@ -55,23 +55,23 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 
 # Inputs
 set_location_assignment PIN_Y2 -to entrada_clock
-set_location_assignment PIN_AB22 -to botao
-set_location_assignment PIN_AB21 -to botao_continue
-set_location_assignment PIN_Y16 -to sw[0]
-set_location_assignment PIN_AD21 -to sw[1]
-set_location_assignment PIN_AE16 -to sw[2]
-set_location_assignment PIN_AD15 -to sw[3]
-set_location_assignment PIN_AE15 -to sw[4]
-set_location_assignment PIN_AC19 -to sw[5]
-set_location_assignment PIN_AF16 -to sw[6]
-set_location_assignment PIN_AD19 -to sw[7]
-set_location_assignment PIN_AF15 -to sw[8]
-set_location_assignment PIN_AF24 -to sw[9]
-set_location_assignment PIN_AE21 -to sw[10]
-set_location_assignment PIN_AF25 -to sw[11]
-set_location_assignment PIN_AC22 -to sw[12]
-set_location_assignment PIN_AE22 -to sw[13]
-set_location_assignment PIN_AG25 -to loop_enable
+set_location_assignment PIN_M23 -to botao
+set_location_assignment PIN_N21 -to botao_continue
+set_location_assignment PIN_AB28 -to sw[0]
+set_location_assignment PIN_AC28 -to sw[1]
+set_location_assignment PIN_AC27 -to sw[2]
+set_location_assignment PIN_AD27 -to sw[3]
+set_location_assignment PIN_AB27 -to sw[4]
+set_location_assignment PIN_AC26 -to sw[5]
+set_location_assignment PIN_AD26 -to sw[6]
+set_location_assignment PIN_AB26 -to sw[7]
+set_location_assignment PIN_AC25 -to sw[8]
+set_location_assignment PIN_AB25 -to sw[9]
+set_location_assignment PIN_AC24 -to sw[10]
+set_location_assignment PIN_AB24 -to sw[11]
+set_location_assignment PIN_AB23 -to sw[12]
+set_location_assignment PIN_AA24 -to sw[13]
+set_location_assignment PIN_Y23 -to loop_enable
 
 # Outputs
 set_location_assignment PIN_G19 -to led[0]
@@ -119,6 +119,23 @@ set_location_assignment PIN_AF23 -to display4[5]
 set_location_assignment PIN_Y19 -to display4[6]
 
 # Debugs
+# MSB FP
+set_location_assignment PIN_AD17 -to display_fp2[0]
+set_location_assignment PIN_AE17 -to display_fp2[1]
+set_location_assignment PIN_AG17 -to display_fp2[2]
+set_location_assignment PIN_AH17 -to display_fp2[3]
+set_location_assignment PIN_AF17 -to display_fp2[4]
+set_location_assignment PIN_AG18 -to display_fp2[5]
+set_location_assignment PIN_AA14 -to display_fp2[6]
+# LSB FP
+set_location_assignment PIN_AA17 -to display_fp1[0]
+set_location_assignment PIN_AB16 -to display_fp1[1]
+set_location_assignment PIN_AA16 -to display_fp1[2]
+set_location_assignment PIN_AB17 -to display_fp1[3]
+set_location_assignment PIN_AB15 -to display_fp1[4]
+set_location_assignment PIN_AA15 -to display_fp1[5]
+set_location_assignment PIN_AC17 -to display_fp1[6]
+
 # MSB PC
 set_location_assignment PIN_AD18 -to display_pc2[0]
 set_location_assignment PIN_AC18 -to display_pc2[1]
@@ -135,23 +152,6 @@ set_location_assignment PIN_AH21 -to display_pc1[3]
 set_location_assignment PIN_AE19 -to display_pc1[4]
 set_location_assignment PIN_AF19 -to display_pc1[5]
 set_location_assignment PIN_AE18 -to display_pc1[6]
-
-# MSB FP
-set_location_assignment PIN_AD17 -to display_fp2[0]
-set_location_assignment PIN_AE17 -to display_fp2[1]
-set_location_assignment PIN_AG17 -to display_fp2[2]
-set_location_assignment PIN_AH17 -to display_fp2[3]
-set_location_assignment PIN_AF17 -to display_fp2[4]
-set_location_assignment PIN_AG18 -to display_fp2[5]
-set_location_assignment PIN_AA14 -to display_fp2[6]
-#LSB FP
-set_location_assignment PIN_AA17 -to display_fp1[0]
-set_location_assignment PIN_AB16 -to display_fp1[1]
-set_location_assignment PIN_AA16 -to display_fp1[2]
-set_location_assignment PIN_AB17 -to display_fp1[3]
-set_location_assignment PIN_AB15 -to display_fp1[4]
-set_location_assignment PIN_AA15 -to display_fp1[5]
-set_location_assignment PIN_AC17 -to display_fp1[6]
 
 # LCD
 set_location_assignment PIN_M2 -to LCD_RS
@@ -175,6 +175,11 @@ set_global_assignment -name SYNCHRONIZER_IDENTIFICATION AUTO
 set_global_assignment -name SDC_FILE "Projeto-Processador.sdc"
 set_global_assignment -name SOURCE_FILE "Projeto-Processador.qsf"
 set_global_assignment -name TEXT_FILE single_port_rom_init.txt
+set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE SPEED
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+
 set_global_assignment -name VERILOG_FILE modulos/unidade_processamento.v
 set_global_assignment -name VERILOG_FILE modulos/unidade_pc_output.v
 set_global_assignment -name VERILOG_FILE modulos/unidade_controle_ULA.v
@@ -196,12 +201,9 @@ set_global_assignment -name VERILOG_FILE modulos/multiplex_entrada.v
 set_global_assignment -name VERILOG_FILE modulos/multiplex_destino.v
 set_global_assignment -name VERILOG_FILE modulos/multiplex_ALUSrc.v
 set_global_assignment -name VERILOG_FILE modulos/modulo_ula.v
-set_global_assignment -name VERILOG_FILE modulos/modulo_pc.v
-set_global_assignment -name VERILOG_FILE modulos/modulo_output.v
 set_global_assignment -name VERILOG_FILE modulos/modulo_jump.v
 set_global_assignment -name VERILOG_FILE modulos/modulo_input.v
 set_global_assignment -name VERILOG_FILE modulos/modulo_branch.v
-set_global_assignment -name VERILOG_FILE modulos/modulo_mapper_md.v
 set_global_assignment -name VERILOG_FILE modulos/lcdlab3.v
 set_global_assignment -name VERILOG_FILE modulos/display_lcd.v
 set_global_assignment -name VERILOG_FILE modulos/display_7segmentos.v
@@ -210,11 +212,5 @@ set_global_assignment -name VERILOG_FILE modulos/bne_or_beq.v
 set_global_assignment -name VERILOG_FILE modulos/bcd.v
 set_global_assignment -name VERILOG_FILE modulos/banco_registradores.v
 set_global_assignment -name VERILOG_FILE modulos/modulo_pc_v2.v
-set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE SPEED
 set_global_assignment -name VERILOG_FILE modulos/modulo_output_v2.v
-set_global_assignment -name VERILOG_FILE modulos/unidade_processamento_v2.v
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
