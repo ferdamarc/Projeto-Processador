@@ -4,3 +4,6 @@ incremental_db/
 # Arquivos de backup gerados pelo Quartus
 *.bak
 
+# Manuais e arquivos auxiliares
+others/DE2_115_User_manual.pdf
+
