@@ -1,6 +1,6 @@
 Fitter report for Projeto-Processador
-Thu Jan 08 19:02:11 2026
-Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
+Mon Jan 26 11:09:36 2026
+Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
 ---------------------
@@ -53,7 +53,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2019  Intel Corporation. All rights reserved.
+Copyright (C) 2020  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
@@ -73,8 +73,8 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Fitter Summary                                                                   ;
 +------------------------------------+---------------------------------------------+
-; Fitter Status                      ; Successful - Thu Jan 08 19:02:11 2026       ;
-; Quartus Prime Version              ; 19.1.0 Build 670 09/22/2019 SJ Lite Edition ;
+; Fitter Status                      ; Successful - Mon Jan 26 11:09:36 2026       ;
+; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; Projeto-Processador                         ;
 ; Top-level Entity Name              ; unidade_processamento                       ;
 ; Family                             ; Cyclone IV E                                ;
@@ -166,9 +166,9 @@ https://fpgasoftware.intel.com/eula.
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   2.5%      ;
-;     Processor 3            ;   2.5%      ;
-;     Processor 4            ;   2.5%      ;
+;     Processor 2            ;   2.4%      ;
+;     Processor 3            ;   2.3%      ;
+;     Processor 4            ;   2.3%      ;
 +----------------------------+-------------+
 
 
@@ -210,7 +210,7 @@ https://fpgasoftware.intel.com/eula.
 +--------------+
 ; Pin-Out File ;
 +--------------+
-The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projeto-Processador.pin.
+The pin-out file can be found in C:/Users/ferna/workspace/FerM32bIPS/output_files/Projeto-Processador.pin.
 
 
 +---------------------------------------------------------------------------+
@@ -255,11 +255,11 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; ASMI blocks                                 ; 0 / 1 ( 0 % )               ;
 ; Oscillator blocks                           ; 0 / 1 ( 0 % )               ;
 ; Impedance control blocks                    ; 0 / 4 ( 0 % )               ;
-; Average interconnect usage (total/H/V)      ; 4.4% / 4.2% / 4.6%          ;
-; Peak interconnect usage (total/H/V)         ; 46.7% / 45.6% / 48.4%       ;
+; Average interconnect usage (total/H/V)      ; 4.1% / 3.9% / 4.4%          ;
+; Peak interconnect usage (total/H/V)         ; 40.1% / 38.3% / 42.7%       ;
 ; Maximum fan-out                             ; 1867                        ;
 ; Highest non-global fan-out                  ; 1867                        ;
-; Total fan-out                               ; 50869                       ;
+; Total fan-out                               ; 50865                       ;
 ; Average fan-out                             ; 3.40                        ;
 +---------------------------------------------+-----------------------------+
 *  Register count does not include registers inside RAM blocks or DSP blocks.
@@ -309,7 +309,7 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ;     -- Registered Output Connections        ; 0                       ; 0                              ;
 ;                                             ;                         ;                                ;
 ; Internal Connections                        ;                         ;                                ;
-;     -- Total Connections                    ; 51449                   ; 5                              ;
+;     -- Total Connections                    ; 51445                   ; 5                              ;
 ;     -- Registered Connections               ; 18166                   ; 0                              ;
 ;                                             ;                         ;                                ;
 ; External Connections                        ;                         ;                                ;
@@ -342,24 +342,24 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 +----------------+-------+----------+--------------+--------------+--------------+-----------------------+--------------------+--------+----------------+---------------+-----------------+----------+--------------+--------------+---------------------------+----------------------+-----------+
 ; Name           ; Pin # ; I/O Bank ; X coordinate ; Y coordinate ; Z coordinate ; Combinational Fan-Out ; Registered Fan-Out ; Global ; Input Register ; Power Up High ; PCI I/O Enabled ; Bus Hold ; Weak Pull Up ; I/O Standard ; Termination Control Block ; Location assigned by ; Slew Rate ;
 +----------------+-------+----------+--------------+--------------+--------------+-----------------------+--------------------+--------+----------------+---------------+-----------------+----------+--------------+--------------+---------------------------+----------------------+-----------+
-; botao          ; AB22  ; 4        ; 107          ; 0            ; 0            ; 5                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; botao_continue ; AB21  ; 4        ; 109          ; 0            ; 7            ; 5                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; botao          ; M23   ; 6        ; 115          ; 40           ; 7            ; 5                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; botao_continue ; N21   ; 6        ; 115          ; 42           ; 14           ; 5                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
 ; entrada_clock  ; Y2    ; 2        ; 0            ; 36           ; 14           ; 99                    ; 0                  ; yes    ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; loop_enable    ; AG25  ; 4        ; 91           ; 0            ; 21           ; 4                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[0]          ; Y16   ; 4        ; 96           ; 0            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[10]         ; AE21  ; 4        ; 85           ; 0            ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[11]         ; AF25  ; 4        ; 83           ; 0            ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[12]         ; AC22  ; 4        ; 109          ; 0            ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[13]         ; AE22  ; 4        ; 96           ; 0            ; 7            ; 15                    ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[1]          ; AD21  ; 4        ; 102          ; 0            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[2]          ; AE16  ; 4        ; 65           ; 0            ; 21           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[3]          ; AD15  ; 4        ; 60           ; 0            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[4]          ; AE15  ; 4        ; 60           ; 0            ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[5]          ; AC19  ; 4        ; 94           ; 0            ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[6]          ; AF16  ; 4        ; 65           ; 0            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[7]          ; AD19  ; 4        ; 94           ; 0            ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[8]          ; AF15  ; 4        ; 60           ; 0            ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
-; sw[9]          ; AF24  ; 4        ; 83           ; 0            ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; loop_enable    ; Y23   ; 5        ; 115          ; 14           ; 7            ; 4                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[0]          ; AB28  ; 5        ; 115          ; 17           ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[10]         ; AC24  ; 5        ; 115          ; 4            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[11]         ; AB24  ; 5        ; 115          ; 5            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[12]         ; AB23  ; 5        ; 115          ; 7            ; 14           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[13]         ; AA24  ; 5        ; 115          ; 9            ; 21           ; 15                    ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[1]          ; AC28  ; 5        ; 115          ; 14           ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[2]          ; AC27  ; 5        ; 115          ; 15           ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[3]          ; AD27  ; 5        ; 115          ; 13           ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[4]          ; AB27  ; 5        ; 115          ; 18           ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[5]          ; AC26  ; 5        ; 115          ; 11           ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[6]          ; AD26  ; 5        ; 115          ; 10           ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[7]          ; AB26  ; 5        ; 115          ; 15           ; 0            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[8]          ; AC25  ; 5        ; 115          ; 4            ; 21           ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
+; sw[9]          ; AB25  ; 5        ; 115          ; 16           ; 7            ; 1                     ; 0                  ; no     ; no             ; no            ; yes             ; no       ; Off          ; 2.5 V        ; --                        ; User                 ; no        ;
 +----------------+-------+----------+--------------+--------------+--------------+-----------------------+--------------------+--------+----------------+---------------+-----------------+----------+--------------+--------------+---------------------------+----------------------+-----------+
 
 
@@ -492,9 +492,9 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; 1        ; 17 / 56 ( 30 % ) ; 2.5V          ; --           ;
 ; 2        ; 1 / 63 ( 2 % )   ; 2.5V          ; --           ;
 ; 3        ; 1 / 73 ( 1 % )   ; 2.5V          ; --           ;
-; 4        ; 49 / 71 ( 69 % ) ; 2.5V          ; --           ;
-; 5        ; 15 / 65 ( 23 % ) ; 2.5V          ; --           ;
-; 6        ; 6 / 58 ( 10 % )  ; 2.5V          ; --           ;
+; 4        ; 32 / 71 ( 45 % ) ; 2.5V          ; --           ;
+; 5        ; 30 / 65 ( 46 % ) ; 2.5V          ; --           ;
+; 6        ; 8 / 58 ( 14 % )  ; 2.5V          ; --           ;
 ; 7        ; 18 / 72 ( 25 % ) ; 2.5V          ; --           ;
 ; 8        ; 0 / 71 ( 0 % )   ; 2.5V          ; --           ;
 +----------+------------------+---------------+--------------+
@@ -554,7 +554,7 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AA21     ; 269        ; 4        ; display4[3]                                               ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AA22     ; 275        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AA23     ; 280        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AA24     ; 279        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; --       ; --           ;
+; AA24     ; 279        ; 5        ; sw[13]                                                    ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; AA25     ; 294        ; 5        ; display3[0]                                               ; output ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; AA26     ; 293        ; 5        ; display3[1]                                               ; output ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; AA27     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
@@ -579,14 +579,14 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AB18     ; 254        ; 4        ; display_pc2[2]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AB19     ; 253        ; 4        ; display_pc1[0]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AB20     ; 257        ; 4        ; display4[2]                                               ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AB21     ; 266        ; 4        ; botao_continue                                            ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AB22     ; 265        ; 4        ; botao                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AB23     ; 276        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AB24     ; 274        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AB25     ; 292        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AB26     ; 291        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AB27     ; 296        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AB28     ; 295        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
+; AB21     ; 266        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
+; AB22     ; 265        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
+; AB23     ; 276        ; 5        ; sw[12]                                                    ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AB24     ; 274        ; 5        ; sw[11]                                                    ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AB25     ; 292        ; 5        ; sw[9]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AB26     ; 291        ; 5        ; sw[7]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AB27     ; 296        ; 5        ; sw[4]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AB28     ; 295        ; 5        ; sw[0]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; AC1      ; 94         ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AC2      ; 93         ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AC3      ; 95         ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
@@ -605,16 +605,16 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AC16     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; AC17     ; 221        ; 4        ; display_fp1[6]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AC18     ; 240        ; 4        ; display_pc2[1]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AC19     ; 247        ; 4        ; sw[5]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AC19     ; 247        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AC20     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; AC21     ; 258        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; AC22     ; 267        ; 4        ; sw[12]                                                    ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AC22     ; 267        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AC23     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
-; AC24     ; 273        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AC25     ; 272        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AC26     ; 282        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AC27     ; 290        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AC28     ; 289        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
+; AC24     ; 273        ; 5        ; sw[10]                                                    ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AC25     ; 272        ; 5        ; sw[8]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AC26     ; 282        ; 5        ; sw[5]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AC27     ; 290        ; 5        ; sw[2]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AC28     ; 289        ; 5        ; sw[1]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; AD1      ; 98         ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AD2      ; 97         ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AD3      ; 96         ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
@@ -629,19 +629,19 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AD12     ; 182        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AD13     ;            ; 3        ; VCCIO3                                                    ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
 ; AD14     ; 196        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; AD15     ; 204        ; 4        ; sw[3]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AD15     ; 204        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AD16     ;            ; 4        ; VCCIO4                                                    ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
 ; AD17     ; 222        ; 4        ; display_fp2[0]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AD18     ; 237        ; 4        ; display_pc2[0]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AD19     ; 248        ; 4        ; sw[7]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AD19     ; 248        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AD20     ;            ; 4        ; VCCIO4                                                    ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
-; AD21     ; 259        ; 4        ; sw[1]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AD21     ; 259        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AD22     ; 268        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AD23     ;            ; 4        ; VCCIO4                                                    ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
 ; AD24     ; 260        ; 4        ; display4[4]                                               ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AD25     ; 255        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; AD26     ; 281        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
-; AD27     ; 286        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
+; AD26     ; 281        ; 5        ; sw[6]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
+; AD27     ; 286        ; 5        ; sw[3]                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; AD28     ; 285        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AE1      ; 106        ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AE2      ; 105        ; 2        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
@@ -657,14 +657,14 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AE12     ; 169        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AE13     ; 177        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AE14     ; 183        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; AE15     ; 205        ; 4        ; sw[4]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AE16     ; 209        ; 4        ; sw[2]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AE15     ; 205        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
+; AE16     ; 209        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AE17     ; 215        ; 4        ; display_fp2[1]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AE18     ; 225        ; 4        ; display_pc1[6]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AE19     ; 231        ; 4        ; display_pc1[4]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AE20     ; 235        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; AE21     ; 238        ; 4        ; sw[10]                                                    ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AE22     ; 251        ; 4        ; sw[13]                                                    ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AE21     ; 238        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
+; AE22     ; 251        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AE23     ; 261        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AE24     ; 256        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AE25     ; 243        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
@@ -685,8 +685,8 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AF12     ; 170        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF13     ; 178        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF14     ; 184        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; AF15     ; 206        ; 4        ; sw[8]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AF16     ; 210        ; 4        ; sw[6]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AF15     ; 206        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
+; AF16     ; 210        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF17     ; 216        ; 4        ; display_fp2[4]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AF18     ; 226        ; 4        ; display_pc2[5]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; AF19     ; 232        ; 4        ; display_pc1[5]                                            ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
@@ -694,8 +694,8 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AF21     ; 239        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF22     ; 252        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF23     ; 262        ; 4        ; display4[5]                                               ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AF24     ; 233        ; 4        ; sw[9]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
-; AF25     ; 234        ; 4        ; sw[11]                                                    ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AF24     ; 233        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
+; AF25     ; 234        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF26     ; 244        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AF27     ; 277        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; AF28     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
@@ -723,7 +723,7 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; AG22     ; 227        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AG23     ; 229        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AG24     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
-; AG25     ; 245        ; 4        ; loop_enable                                               ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; AG25     ; 245        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AG26     ; 270        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; AG27     ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; AG28     ;            ; 5        ; VCCIO5                                                    ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
@@ -1055,7 +1055,7 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; M20      ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; M21      ; 368        ; 6        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; --       ; --           ;
 ; M22      ; 342        ; 6        ; ^MSEL2                                                    ;        ;              ;         ; --         ;                 ; --       ; --           ;
-; M23      ; 344        ; 6        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
+; M23      ; 344        ; 6        ; botao                                                     ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; M24      ; 347        ; 6        ; display2[0]                                               ; output ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; M25      ; 356        ; 6        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; M26      ; 355        ; 6        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
@@ -1081,7 +1081,7 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; N18      ;            ;          ; VCCINT                                                    ; power  ;              ; 1.2V    ; --         ;                 ; --       ; --           ;
 ; N19      ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; N20      ;            ;          ; VCCINT                                                    ; power  ;              ; 1.2V    ; --         ;                 ; --       ; --           ;
-; N21      ; 348        ; 6        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; --       ; --           ;
+; N21      ; 348        ; 6        ; botao_continue                                            ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; N22      ; 340        ; 6        ; ^MSEL0                                                    ;        ;              ;         ; --         ;                 ; --       ; --           ;
 ; N23      ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; N24      ;            ; 6        ; VCCIO6                                                    ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
@@ -1272,14 +1272,14 @@ The pin-out file can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projet
 ; Y13      ; 189        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; Y14      ; 197        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; Y15      ; 198        ; 3        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
-; Y16      ; 250        ; 4        ; sw[0]                                                     ; input  ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
+; Y16      ; 250        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; Y17      ; 249        ; 4        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Column I/O ;                 ; no       ; On           ;
 ; Y18      ;            ;          ; GND                                                       ; gnd    ;              ;         ; --         ;                 ; --       ; --           ;
 ; Y19      ; 263        ; 4        ; display4[6]                                               ; output ; 2.5 V        ;         ; Column I/O ; Y               ; no       ; Off          ;
 ; Y20      ;            ;          ; VCCD_PLL4                                                 ; power  ;              ; 1.2V    ; --         ;                 ; --       ; --           ;
 ; Y21      ;            ; --       ; VCCA4                                                     ; power  ;              ; 2.5V    ; --         ;                 ; --       ; --           ;
 ; Y22      ; 320        ; 5        ; display2[1]                                               ; output ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
-; Y23      ; 288        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
+; Y23      ; 288        ; 5        ; loop_enable                                               ; input  ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; Y24      ; 287        ; 5        ; RESERVED_INPUT_WITH_WEAK_PULLUP                           ;        ;              ;         ; Row I/O    ;                 ; no       ; On           ;
 ; Y25      ; 298        ; 5        ; display3[2]                                               ; output ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
 ; Y26      ; 297        ; 5        ; display3[4]                                               ; output ; 2.5 V        ;         ; Row I/O    ; Y               ; no       ; Off          ;
@@ -1473,9 +1473,9 @@ Note: Pin directions (input, output or bidir) are based on device operating in u
 ;             |sign_div_unsign_klh:divider|  ; 85 (0)      ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 82 (0)       ; 0 (0)             ; 3 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod6|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider                                      ; sign_div_unsign_klh   ; work         ;
 ;                |alt_u_div_s6f:divider|     ; 85 (85)     ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 82 (82)      ; 0 (0)             ; 3 (3)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod6|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider                ; alt_u_div_s6f         ; work         ;
 ;       |lpm_divide:Mod7|                    ; 84 (0)      ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (0)       ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7                                                                                                ; lpm_divide            ; work         ;
-;          |lpm_divide_4bm:auto_generated|   ; 84 (0)      ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (0)       ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7|lpm_divide_4bm:auto_generated                                                                  ; lpm_divide_4bm        ; work         ;
-;             |sign_div_unsign_nlh:divider|  ; 84 (0)      ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (0)       ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7|lpm_divide_4bm:auto_generated|sign_div_unsign_nlh:divider                                      ; sign_div_unsign_nlh   ; work         ;
-;                |alt_u_div_27f:divider|     ; 84 (84)     ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (84)      ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7|lpm_divide_4bm:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider                ; alt_u_div_27f         ; work         ;
+;          |lpm_divide_2bm:auto_generated|   ; 84 (0)      ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (0)       ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7|lpm_divide_2bm:auto_generated                                                                  ; lpm_divide_2bm        ; work         ;
+;             |sign_div_unsign_nlh:divider|  ; 84 (0)      ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (0)       ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7|lpm_divide_2bm:auto_generated|sign_div_unsign_nlh:divider                                      ; sign_div_unsign_nlh   ; work         ;
+;                |alt_u_div_27f:divider|     ; 84 (84)     ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 84 (84)      ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_output_v2:exit|lpm_divide:Mod7|lpm_divide_2bm:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider                ; alt_u_div_27f         ; work         ;
 ;    |modulo_pc_v2:pc|                       ; 21 (21)     ; 13 (13)                   ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 8 (8)        ; 0 (0)             ; 13 (13)          ; |unidade_processamento|modulo_pc_v2:pc                                                                                                                      ; modulo_pc_v2          ; work         ;
 ;    |modulo_ula:ula|                        ; 1902 (757)  ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 6            ; 0       ; 3         ; 0    ; 0            ; 1883 (738)   ; 0 (0)             ; 19 (19)          ; |unidade_processamento|modulo_ula:ula                                                                                                                       ; modulo_ula            ; work         ;
 ;       |lpm_divide:Div0|                    ; 1117 (0)    ; 0 (0)                     ; 0 (0)         ; 0           ; 0    ; 0            ; 0       ; 0         ; 0    ; 0            ; 1117 (0)     ; 0 (0)             ; 0 (0)            ; |unidade_processamento|modulo_ula:ula|lpm_divide:Div0                                                                                                       ; lpm_divide            ; work         ;
@@ -1592,23 +1592,23 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; LCD_DATA[5]     ; Bidir    ; --            ; --            ; --                    ; --  ; --   ;
 ; LCD_DATA[6]     ; Bidir    ; --            ; --            ; --                    ; --  ; --   ;
 ; LCD_DATA[7]     ; Bidir    ; --            ; --            ; --                    ; --  ; --   ;
-; loop_enable     ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; loop_enable     ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
 ; entrada_clock   ; Input    ; (0) 0 ps      ; --            ; --                    ; --  ; --   ;
 ; sw[13]          ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[0]           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; sw[0]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
 ; sw[1]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[2]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[3]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[4]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[5]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
+; sw[2]           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; sw[3]           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; sw[4]           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; sw[5]           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
 ; sw[6]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
 ; sw[7]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
 ; sw[8]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[9]           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; sw[10]          ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
-; sw[11]          ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; sw[9]           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
+; sw[10]          ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
+; sw[11]          ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
 ; sw[12]          ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
-; botao           ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
+; botao           ; Input    ; --            ; (6) 1314 ps   ; --                    ; --  ; --   ;
 ; botao_continue  ; Input    ; (6) 1314 ps   ; --            ; --                    ; --  ; --   ;
 +-----------------+----------+---------------+---------------+-----------------------+-----+------+
 
@@ -1627,10 +1627,10 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; LCD_DATA[6]                                       ;                   ;         ;
 ; LCD_DATA[7]                                       ;                   ;         ;
 ; loop_enable                                       ;                   ;         ;
-;      - modulo_pc_v2:pc|instrucao_atual[0]~25      ; 1                 ; 6       ;
-;      - modulo_pc_v2:pc|instrucao_atual[12]~26     ; 1                 ; 6       ;
-;      - modulo_pc_v2:pc|instrucao_atual[12]~28     ; 1                 ; 6       ;
-;      - led_loop_status~output                     ; 1                 ; 6       ;
+;      - modulo_pc_v2:pc|instrucao_atual[0]~25      ; 0                 ; 6       ;
+;      - modulo_pc_v2:pc|instrucao_atual[12]~26     ; 0                 ; 6       ;
+;      - modulo_pc_v2:pc|instrucao_atual[12]~28     ; 0                 ; 6       ;
+;      - led_loop_status~output                     ; 0                 ; 6       ;
 ; entrada_clock                                     ;                   ;         ;
 ; sw[13]                                            ;                   ;         ;
 ;      - modulo_output_v2:exit|always0~0            ; 0                 ; 6       ;
@@ -1649,17 +1649,17 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ;      - modulo_input:enter|resultado[12]           ; 0                 ; 6       ;
 ;      - modulo_output_v2:exit|reg_led_13~feeder    ; 0                 ; 6       ;
 ; sw[0]                                             ;                   ;         ;
-;      - modulo_input:enter|resultado[0]            ; 1                 ; 6       ;
+;      - modulo_input:enter|resultado[0]            ; 0                 ; 6       ;
 ; sw[1]                                             ;                   ;         ;
 ;      - modulo_input:enter|resultado[1]            ; 0                 ; 6       ;
 ; sw[2]                                             ;                   ;         ;
-;      - modulo_input:enter|resultado[2]            ; 0                 ; 6       ;
+;      - modulo_input:enter|resultado[2]            ; 1                 ; 6       ;
 ; sw[3]                                             ;                   ;         ;
-;      - modulo_input:enter|resultado[3]            ; 0                 ; 6       ;
+;      - modulo_input:enter|resultado[3]            ; 1                 ; 6       ;
 ; sw[4]                                             ;                   ;         ;
-;      - modulo_input:enter|resultado[4]            ; 0                 ; 6       ;
+;      - modulo_input:enter|resultado[4]            ; 1                 ; 6       ;
 ; sw[5]                                             ;                   ;         ;
-;      - modulo_input:enter|resultado[5]            ; 0                 ; 6       ;
+;      - modulo_input:enter|resultado[5]            ; 1                 ; 6       ;
 ; sw[6]                                             ;                   ;         ;
 ;      - modulo_input:enter|resultado[6]            ; 0                 ; 6       ;
 ; sw[7]                                             ;                   ;         ;
@@ -1667,19 +1667,19 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; sw[8]                                             ;                   ;         ;
 ;      - modulo_input:enter|resultado[8]            ; 0                 ; 6       ;
 ; sw[9]                                             ;                   ;         ;
-;      - modulo_input:enter|resultado[9]            ; 0                 ; 6       ;
+;      - modulo_input:enter|resultado[9]            ; 1                 ; 6       ;
 ; sw[10]                                            ;                   ;         ;
-;      - modulo_input:enter|resultado[10]           ; 1                 ; 6       ;
+;      - modulo_input:enter|resultado[10]           ; 0                 ; 6       ;
 ; sw[11]                                            ;                   ;         ;
-;      - modulo_input:enter|resultado[11]           ; 1                 ; 6       ;
+;      - modulo_input:enter|resultado[11]           ; 0                 ; 6       ;
 ; sw[12]                                            ;                   ;         ;
 ;      - modulo_input:enter|resultado[12]           ; 0                 ; 6       ;
 ; botao                                             ;                   ;         ;
-;      - modulo_input:enter|debouncer[3]~4          ; 0                 ; 6       ;
-;      - modulo_input:enter|debouncer~5             ; 0                 ; 6       ;
-;      - modulo_input:enter|debouncer~6             ; 0                 ; 6       ;
-;      - modulo_input:enter|debouncer~7             ; 0                 ; 6       ;
-;      - modulo_input:enter|debouncer~8             ; 0                 ; 6       ;
+;      - modulo_input:enter|debouncer[3]~4          ; 1                 ; 6       ;
+;      - modulo_input:enter|debouncer~5             ; 1                 ; 6       ;
+;      - modulo_input:enter|debouncer~6             ; 1                 ; 6       ;
+;      - modulo_input:enter|debouncer~7             ; 1                 ; 6       ;
+;      - modulo_input:enter|debouncer~8             ; 1                 ; 6       ;
 ; botao_continue                                    ;                   ;         ;
 ;      - modulo_input:enter|debouncer_continue[3]~4 ; 0                 ; 6       ;
 ;      - modulo_input:enter|debouncer_continue~5    ; 0                 ; 6       ;
@@ -1694,73 +1694,73 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +--------------------------------------------------------------+--------------------+---------+----------------------------+--------+----------------------+------------------+---------------------------+
 ; Name                                                         ; Location           ; Fan-Out ; Usage                      ; Global ; Global Resource Used ; Global Line Name ; Enable Signal Source Name ;
 +--------------------------------------------------------------+--------------------+---------+----------------------------+--------+----------------------+------------------+---------------------------+
-; banco_registradores:br|Decoder0~10                           ; LCCOMB_X61_Y41_N14 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~11                           ; LCCOMB_X63_Y41_N10 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~14                           ; LCCOMB_X58_Y45_N16 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~17                           ; LCCOMB_X60_Y41_N10 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~18                           ; LCCOMB_X60_Y41_N26 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~19                           ; LCCOMB_X60_Y41_N12 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~2                            ; LCCOMB_X63_Y41_N28 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~21                           ; LCCOMB_X63_Y41_N22 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~22                           ; LCCOMB_X63_Y38_N16 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~23                           ; LCCOMB_X61_Y41_N2  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~25                           ; LCCOMB_X63_Y41_N4  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~27                           ; LCCOMB_X60_Y41_N4  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~29                           ; LCCOMB_X63_Y41_N8  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~31                           ; LCCOMB_X60_Y41_N22 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~32                           ; LCCOMB_X60_Y41_N14 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~33                           ; LCCOMB_X63_Y41_N20 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~35                           ; LCCOMB_X61_Y41_N16 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~36                           ; LCCOMB_X61_Y41_N26 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~38                           ; LCCOMB_X61_Y41_N10 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~39                           ; LCCOMB_X61_Y41_N22 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~40                           ; LCCOMB_X61_Y41_N20 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~42                           ; LCCOMB_X60_Y41_N6  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~43                           ; LCCOMB_X60_Y41_N30 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~44                           ; LCCOMB_X61_Y41_N24 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~45                           ; LCCOMB_X61_Y41_N18 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~46                           ; LCCOMB_X60_Y41_N8  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~47                           ; LCCOMB_X63_Y41_N24 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~48                           ; LCCOMB_X61_Y41_N12 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~49                           ; LCCOMB_X63_Y41_N2  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~5                            ; LCCOMB_X63_Y41_N16 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; banco_registradores:br|Decoder0~8                            ; LCCOMB_X63_Y38_N0  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~10                           ; LCCOMB_X54_Y36_N12 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~11                           ; LCCOMB_X54_Y35_N16 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~14                           ; LCCOMB_X45_Y39_N6  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~17                           ; LCCOMB_X53_Y36_N26 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~18                           ; LCCOMB_X53_Y36_N24 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~19                           ; LCCOMB_X53_Y36_N14 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~2                            ; LCCOMB_X54_Y35_N20 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~21                           ; LCCOMB_X54_Y35_N6  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~22                           ; LCCOMB_X54_Y33_N2  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~23                           ; LCCOMB_X54_Y36_N18 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~25                           ; LCCOMB_X54_Y35_N24 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~27                           ; LCCOMB_X53_Y36_N30 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~29                           ; LCCOMB_X54_Y35_N4  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~31                           ; LCCOMB_X53_Y36_N18 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~32                           ; LCCOMB_X53_Y36_N28 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~33                           ; LCCOMB_X54_Y35_N8  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~35                           ; LCCOMB_X54_Y36_N14 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~36                           ; LCCOMB_X54_Y36_N6  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~38                           ; LCCOMB_X54_Y36_N30 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~39                           ; LCCOMB_X54_Y36_N10 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~40                           ; LCCOMB_X54_Y36_N2  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~42                           ; LCCOMB_X53_Y36_N22 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~43                           ; LCCOMB_X53_Y36_N10 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~44                           ; LCCOMB_X54_Y36_N4  ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~45                           ; LCCOMB_X54_Y36_N20 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~46                           ; LCCOMB_X53_Y36_N12 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~47                           ; LCCOMB_X54_Y35_N12 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~48                           ; LCCOMB_X54_Y36_N26 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~49                           ; LCCOMB_X54_Y35_N26 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~5                            ; LCCOMB_X54_Y35_N14 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; banco_registradores:br|Decoder0~8                            ; LCCOMB_X54_Y33_N10 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
 ; entrada_clock                                                ; PIN_Y2             ; 3       ; Clock                      ; no     ; --                   ; --               ; --                        ;
 ; entrada_clock                                                ; PIN_Y2             ; 97      ; Clock                      ; yes    ; Global Clock         ; GCLK4            ; --                        ;
-; modulo_input:enter|debouncer_continue~6                      ; LCCOMB_X80_Y7_N10  ; 3       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; modulo_input:enter|debouncer~6                               ; LCCOMB_X74_Y39_N18 ; 3       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; modulo_input:enter|out[11]~54                                ; LCCOMB_X68_Y39_N2  ; 26      ; Sync. clear                ; no     ; --                   ; --               ; --                        ;
-; modulo_input:enter|out[11]~55                                ; LCCOMB_X74_Y39_N28 ; 26      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; modulo_input:enter|reg_clock                                 ; FF_X69_Y39_N13     ; 1187    ; Clock                      ; yes    ; Global Clock         ; GCLK9            ; --                        ;
-; modulo_interrupcao:inter|timer[1]~48                         ; LCCOMB_X65_Y39_N26 ; 16      ; Sync. clear                ; no     ; --                   ; --               ; --                        ;
-; modulo_output_v2:exit|always0~0                              ; LCCOMB_X69_Y41_N28 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; modulo_pc_v2:pc|always0~0                                    ; LCCOMB_X65_Y39_N18 ; 15      ; Sync. load                 ; no     ; --                   ; --               ; --                        ;
-; modulo_pc_v2:pc|instrucao_atual[0]~25                        ; LCCOMB_X65_Y39_N28 ; 14      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; pc_retorno_so[9]~14                                          ; LCCOMB_X63_Y37_N6  ; 13      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; qual_interrupcao[1]~5                                        ; LCCOMB_X63_Y39_N20 ; 2       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; qual_interrupcao[1]~6                                        ; LCCOMB_X65_Y39_N16 ; 13      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; sw[13]                                                       ; PIN_AE22           ; 15      ; Latch enable               ; no     ; --                   ; --               ; --                        ;
-; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ           ; FF_X1_Y36_N11      ; 38      ; Clock                      ; yes    ; Global Clock         ; GCLK1            ; --                        ;
-; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|DATA_BUS_VALUE[5]~0 ; LCCOMB_X43_Y31_N10 ; 2       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; modulo_input:enter|debouncer_continue~6                      ; LCCOMB_X91_Y35_N4  ; 3       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; modulo_input:enter|debouncer~6                               ; LCCOMB_X84_Y31_N8  ; 3       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; modulo_input:enter|out[11]~54                                ; LCCOMB_X45_Y32_N0  ; 26      ; Sync. clear                ; no     ; --                   ; --               ; --                        ;
+; modulo_input:enter|out[11]~55                                ; LCCOMB_X84_Y31_N0  ; 26      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; modulo_input:enter|reg_clock                                 ; FF_X46_Y31_N9      ; 1187    ; Clock                      ; yes    ; Global Clock         ; GCLK0            ; --                        ;
+; modulo_interrupcao:inter|timer[1]~48                         ; LCCOMB_X47_Y29_N4  ; 16      ; Sync. clear                ; no     ; --                   ; --               ; --                        ;
+; modulo_output_v2:exit|always0~0                              ; LCCOMB_X77_Y36_N20 ; 32      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; modulo_pc_v2:pc|always0~0                                    ; LCCOMB_X47_Y29_N6  ; 15      ; Sync. load                 ; no     ; --                   ; --               ; --                        ;
+; modulo_pc_v2:pc|instrucao_atual[0]~25                        ; LCCOMB_X47_Y29_N16 ; 14      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; pc_retorno_so[9]~14                                          ; LCCOMB_X50_Y29_N2  ; 13      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; qual_interrupcao[1]~5                                        ; LCCOMB_X50_Y32_N8  ; 2       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; qual_interrupcao[1]~6                                        ; LCCOMB_X47_Y29_N8  ; 13      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; sw[13]                                                       ; PIN_AA24           ; 15      ; Latch enable               ; no     ; --                   ; --               ; --                        ;
+; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ           ; FF_X1_Y36_N9       ; 38      ; Clock                      ; yes    ; Global Clock         ; GCLK3            ; --                        ;
+; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|DATA_BUS_VALUE[5]~0 ; LCCOMB_X26_Y32_N10 ; 2       ; Clock enable               ; no     ; --                   ; --               ; --                        ;
 ; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|LessThan0~5         ; LCCOMB_X1_Y35_N28  ; 21      ; Sync. clear                ; no     ; --                   ; --               ; --                        ;
-; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|state.Print_String  ; FF_X46_Y30_N27     ; 17      ; Sync. load                 ; no     ; --                   ; --               ; --                        ;
-; tela_lcd:tlcd|lcdlab3:lcd|reset_Delay:r0|Equal0~6            ; LCCOMB_X20_Y34_N24 ; 21      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; tela_lcd:tlcd|lcdlab3:lcd|reset_Delay:r0|oRESET              ; FF_X20_Y34_N25     ; 58      ; Async. clear, Clock enable ; no     ; --                   ; --               ; --                        ;
-; unidade_controle:uc|Decoder0~13                              ; LCCOMB_X66_Y41_N26 ; 32      ; Clock enable, Write enable ; no     ; --                   ; --               ; --                        ;
-; unidade_controle:uc|Decoder0~14                              ; LCCOMB_X66_Y40_N22 ; 17      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
-; unidade_controle:uc|Decoder0~15                              ; LCCOMB_X67_Y41_N22 ; 30      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|state.Print_String  ; FF_X25_Y32_N31     ; 17      ; Sync. load                 ; no     ; --                   ; --               ; --                        ;
+; tela_lcd:tlcd|lcdlab3:lcd|reset_Delay:r0|Equal0~6            ; LCCOMB_X4_Y35_N30  ; 21      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; tela_lcd:tlcd|lcdlab3:lcd|reset_Delay:r0|oRESET              ; FF_X4_Y35_N31      ; 58      ; Async. clear, Clock enable ; no     ; --                   ; --               ; --                        ;
+; unidade_controle:uc|Decoder0~13                              ; LCCOMB_X50_Y28_N2  ; 32      ; Clock enable, Write enable ; no     ; --                   ; --               ; --                        ;
+; unidade_controle:uc|Decoder0~14                              ; LCCOMB_X48_Y29_N22 ; 17      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
+; unidade_controle:uc|Decoder0~15                              ; LCCOMB_X49_Y28_N2  ; 30      ; Clock enable               ; no     ; --                   ; --               ; --                        ;
 +--------------------------------------------------------------+--------------------+---------+----------------------------+--------+----------------------+------------------+---------------------------+
 
 
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Global & Other Fast Signals                                                                                                                                                                ;
-+----------------------------------------------------+----------------+---------+--------------------------------------+----------------------+------------------+---------------------------+
-; Name                                               ; Location       ; Fan-Out ; Fan-Out Using Intentional Clock Skew ; Global Resource Used ; Global Line Name ; Enable Signal Source Name ;
-+----------------------------------------------------+----------------+---------+--------------------------------------+----------------------+------------------+---------------------------+
-; entrada_clock                                      ; PIN_Y2         ; 97      ; 0                                    ; Global Clock         ; GCLK4            ; --                        ;
-; modulo_input:enter|reg_clock                       ; FF_X69_Y39_N13 ; 1187    ; 0                                    ; Global Clock         ; GCLK9            ; --                        ;
-; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ ; FF_X1_Y36_N11  ; 38      ; 0                                    ; Global Clock         ; GCLK1            ; --                        ;
-+----------------------------------------------------+----------------+---------+--------------------------------------+----------------------+------------------+---------------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Global & Other Fast Signals                                                                                                                                                               ;
++----------------------------------------------------+---------------+---------+--------------------------------------+----------------------+------------------+---------------------------+
+; Name                                               ; Location      ; Fan-Out ; Fan-Out Using Intentional Clock Skew ; Global Resource Used ; Global Line Name ; Enable Signal Source Name ;
++----------------------------------------------------+---------------+---------+--------------------------------------+----------------------+------------------+---------------------------+
+; entrada_clock                                      ; PIN_Y2        ; 97      ; 0                                    ; Global Clock         ; GCLK4            ; --                        ;
+; modulo_input:enter|reg_clock                       ; FF_X46_Y31_N9 ; 1187    ; 0                                    ; Global Clock         ; GCLK0            ; --                        ;
+; tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ ; FF_X1_Y36_N9  ; 38      ; 0                                    ; Global Clock         ; GCLK3            ; --                        ;
++----------------------------------------------------+---------------+---------+--------------------------------------+----------------------+------------------+---------------------------+
 
 
 +----------------------------------------------+
@@ -1786,7 +1786,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +-------------------------------------------------------------------------------------------+------+------------------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+--------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+------------------------+------------------------+----------+------------------------+---------------+
 ; Name                                                                                      ; Type ; Mode             ; Clock Mode   ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Port A Input Registers ; Port A Output Registers ; Port B Input Registers ; Port B Output Registers ; Size   ; Implementation Port A Depth ; Implementation Port A Width ; Implementation Port B Depth ; Implementation Port B Width ; Implementation Bits ; M9Ks ; MIF  ; Location                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ; Mixed Width RDW Mode ; Port A RDW Mode        ; Port B RDW Mode        ; ECC Mode ; ECC Pipeline Registers ; Fits in MLABs ;
 +-------------------------------------------------------------------------------------------+------+------------------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+--------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+------------------------+------------------------+----------+------------------------+---------------+
-; modulo_mem_dados:ram_dados|altsyncram:ram_rtl_0|altsyncram_g9d1:auto_generated|ALTSYNCRAM ; AUTO ; Simple Dual Port ; Single Clock ; 8192         ; 32           ; 8192         ; 32           ; yes                    ; no                      ; yes                    ; no                      ; 262144 ; 8192                        ; 32                          ; 8192                        ; 32                          ; 262144              ; 32   ; None ; M9K_X64_Y36_N0, M9K_X64_Y41_N0, M9K_X64_Y40_N0, M9K_X64_Y43_N0, M9K_X51_Y37_N0, M9K_X51_Y40_N0, M9K_X78_Y42_N0, M9K_X64_Y37_N0, M9K_X51_Y38_N0, M9K_X51_Y39_N0, M9K_X51_Y42_N0, M9K_X78_Y47_N0, M9K_X64_Y46_N0, M9K_X64_Y48_N0, M9K_X64_Y42_N0, M9K_X78_Y40_N0, M9K_X64_Y44_N0, M9K_X64_Y38_N0, M9K_X78_Y38_N0, M9K_X51_Y45_N0, M9K_X51_Y36_N0, M9K_X64_Y45_N0, M9K_X51_Y41_N0, M9K_X78_Y46_N0, M9K_X78_Y39_N0, M9K_X64_Y49_N0, M9K_X64_Y39_N0, M9K_X51_Y44_N0, M9K_X64_Y47_N0, M9K_X64_Y50_N0, M9K_X78_Y41_N0, M9K_X78_Y44_N0 ; Don't care           ; New data with NBE Read ; New data with NBE Read ; Off      ; No                     ; No - Unknown  ;
+; modulo_mem_dados:ram_dados|altsyncram:ram_rtl_0|altsyncram_g9d1:auto_generated|ALTSYNCRAM ; AUTO ; Simple Dual Port ; Single Clock ; 8192         ; 32           ; 8192         ; 32           ; yes                    ; no                      ; yes                    ; no                      ; 262144 ; 8192                        ; 32                          ; 8192                        ; 32                          ; 262144              ; 32   ; None ; M9K_X51_Y28_N0, M9K_X64_Y26_N0, M9K_X51_Y38_N0, M9K_X51_Y37_N0, M9K_X64_Y29_N0, M9K_X64_Y38_N0, M9K_X51_Y34_N0, M9K_X64_Y31_N0, M9K_X51_Y33_N0, M9K_X64_Y30_N0, M9K_X64_Y32_N0, M9K_X51_Y26_N0, M9K_X51_Y36_N0, M9K_X51_Y30_N0, M9K_X64_Y35_N0, M9K_X64_Y33_N0, M9K_X64_Y28_N0, M9K_X64_Y36_N0, M9K_X37_Y37_N0, M9K_X51_Y35_N0, M9K_X37_Y33_N0, M9K_X37_Y34_N0, M9K_X51_Y27_N0, M9K_X37_Y35_N0, M9K_X51_Y32_N0, M9K_X37_Y27_N0, M9K_X51_Y31_N0, M9K_X37_Y31_N0, M9K_X51_Y25_N0, M9K_X37_Y36_N0, M9K_X37_Y30_N0, M9K_X51_Y29_N0 ; Don't care           ; New data with NBE Read ; New data with NBE Read ; Off      ; No                     ; No - Unknown  ;
 +-------------------------------------------------------------------------------------------+------+------------------+--------------+--------------+--------------+--------------+--------------+------------------------+-------------------------+------------------------+-------------------------+--------+-----------------------------+-----------------------------+-----------------------------+-----------------------------+---------------------+------+------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+------------------------+------------------------+----------+------------------------+---------------+
 Note: Fitter may spread logical memories into multiple blocks to improve timing. The actual required RAM blocks can be found in the Fitter Resource Usage section.
 
@@ -1813,12 +1813,12 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 +--------------------------------------------------------------------+----------------------------+--------------------+---------------------+--------------------------------+-----------------------+-----------------------+-------------------+-----------------+
 ; Name                                                               ; Mode                       ; Location           ; Sign Representation ; Has Input Shift Register Chain ; Data A Input Register ; Data B Input Register ; Pipeline Register ; Output Register ;
 +--------------------------------------------------------------------+----------------------------+--------------------+---------------------+--------------------------------+-----------------------+-----------------------+-------------------+-----------------+
-; modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out4     ; Simple Multiplier (18-bit) ; DSPOUT_X44_Y36_N2  ;                     ; No                             ;                       ;                       ;                   ; no              ;
-;    modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult3 ;                            ; DSPMULT_X44_Y36_N0 ; Unsigned            ;                                ; no                    ; no                    ; no                ;                 ;
-; modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out6     ; Simple Multiplier (18-bit) ; DSPOUT_X44_Y35_N2  ;                     ; No                             ;                       ;                       ;                   ; no              ;
-;    modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult5 ;                            ; DSPMULT_X44_Y35_N0 ; Unsigned            ;                                ; no                    ; no                    ; no                ;                 ;
-; modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|w513w[0]     ; Simple Multiplier (18-bit) ; DSPOUT_X44_Y34_N2  ;                     ; No                             ;                       ;                       ;                   ; no              ;
-;    modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult1 ;                            ; DSPMULT_X44_Y34_N0 ; Unsigned            ;                                ; no                    ; no                    ; no                ;                 ;
+; modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out4     ; Simple Multiplier (18-bit) ; DSPOUT_X71_Y33_N2  ;                     ; No                             ;                       ;                       ;                   ; no              ;
+;    modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult3 ;                            ; DSPMULT_X71_Y33_N0 ; Unsigned            ;                                ; no                    ; no                    ; no                ;                 ;
+; modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out6     ; Simple Multiplier (18-bit) ; DSPOUT_X71_Y34_N2  ;                     ; No                             ;                       ;                       ;                   ; no              ;
+;    modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult5 ;                            ; DSPMULT_X71_Y34_N0 ; Unsigned            ;                                ; no                    ; no                    ; no                ;                 ;
+; modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|w513w[0]     ; Simple Multiplier (18-bit) ; DSPOUT_X71_Y31_N2  ;                     ; No                             ;                       ;                       ;                   ; no              ;
+;    modulo_ula:ula|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult1 ;                            ; DSPMULT_X71_Y31_N0 ; Unsigned            ;                                ; no                    ; no                    ; no                ;                 ;
 +--------------------------------------------------------------------+----------------------------+--------------------+---------------------+--------------------------------+-----------------------+-----------------------+-------------------+-----------------+
 
 
@@ -1827,14 +1827,14 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 +-----------------------+---------------------------+
 ; Routing Resource Type ; Usage                     ;
 +-----------------------+---------------------------+
-; Block interconnects   ; 16,171 / 342,891 ( 5 % )  ;
-; C16 interconnects     ; 323 / 10,120 ( 3 % )      ;
-; C4 interconnects      ; 9,633 / 209,544 ( 5 % )   ;
-; Direct links          ; 1,652 / 342,891 ( < 1 % ) ;
+; Block interconnects   ; 16,061 / 342,891 ( 5 % )  ;
+; C16 interconnects     ; 231 / 10,120 ( 2 % )      ;
+; C4 interconnects      ; 9,535 / 209,544 ( 5 % )   ;
+; Direct links          ; 1,693 / 342,891 ( < 1 % ) ;
 ; Global clocks         ; 3 / 20 ( 15 % )           ;
-; Local interconnects   ; 7,900 / 119,088 ( 7 % )   ;
-; R24 interconnects     ; 415 / 9,963 ( 4 % )       ;
-; R4 interconnects      ; 11,590 / 289,782 ( 4 % )  ;
+; Local interconnects   ; 7,906 / 119,088 ( 7 % )   ;
+; R24 interconnects     ; 378 / 9,963 ( 4 % )       ;
+; R4 interconnects      ; 10,833 / 289,782 ( 4 % )  ;
 +-----------------------+---------------------------+
 
 
@@ -1867,9 +1867,9 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 +------------------------------------+-------------------------------+
 ; LAB-wide Signals  (Average = 0.35) ; Number of LABs  (Total = 908) ;
 +------------------------------------+-------------------------------+
-; 1 Async. clear                     ; 4                             ;
+; 1 Async. clear                     ; 6                             ;
 ; 1 Clock                            ; 165                           ;
-; 1 Clock enable                     ; 36                            ;
+; 1 Clock enable                     ; 34                            ;
 ; 1 Sync. clear                      ; 3                             ;
 ; 1 Sync. load                       ; 3                             ;
 ; 2 Clock enables                    ; 103                           ;
@@ -1906,11 +1906,11 @@ Note: Fitter may spread logical memories into multiple blocks to improve timing.
 ; 21                                           ; 6                             ;
 ; 22                                           ; 5                             ;
 ; 23                                           ; 7                             ;
-; 24                                           ; 13                            ;
+; 24                                           ; 14                            ;
 ; 25                                           ; 3                             ;
 ; 26                                           ; 6                             ;
 ; 27                                           ; 2                             ;
-; 28                                           ; 8                             ;
+; 28                                           ; 7                             ;
 ; 29                                           ; 4                             ;
 ; 30                                           ; 10                            ;
 ; 31                                           ; 2                             ;
@@ -2267,61 +2267,61 @@ Info (332111): Found 1 clocks
     Info (332111):   Period   Clock Name
     Info (332111): ======== ============
     Info (332111):   20.000      CLK_50M
-Info (176353): Automatically promoted node entrada_clock~input (placed in PIN Y2 (CLK2, DIFFCLK_1p)) File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 9
+Info (176353): Automatically promoted node entrada_clock~input (placed in PIN Y2 (CLK2, DIFFCLK_1p)) File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 9
     Info (176355): Automatically promoted destinations to use location or clock signal Global Clock CLKCTRL_G4
     Info (176356): Following destination nodes may be non-global or may not use global or regional clocks
-        Info (176357): Destination node modulo_input:enter|reg_clock File: C:/Projetos-FPGA/FerM32bIPS/modulos/modulo_input.v Line: 51
-        Info (176357): Destination node tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ File: C:/Projetos-FPGA/FerM32bIPS/modulos/display_lcd.v Line: 85
-Info (176353): Automatically promoted node modulo_input:enter|reg_clock  File: C:/Projetos-FPGA/FerM32bIPS/modulos/modulo_input.v Line: 51
+        Info (176357): Destination node modulo_input:enter|reg_clock File: C:/Users/ferna/workspace/FerM32bIPS/modulos/modulo_input.v Line: 51
+        Info (176357): Destination node tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ File: C:/Users/ferna/workspace/FerM32bIPS/modulos/display_lcd.v Line: 85
+Info (176353): Automatically promoted node modulo_input:enter|reg_clock  File: C:/Users/ferna/workspace/FerM32bIPS/modulos/modulo_input.v Line: 51
     Info (176355): Automatically promoted destinations to use location or clock signal Global Clock
     Info (176356): Following destination nodes may be non-global or may not use global or regional clocks
-        Info (176357): Destination node modulo_input:enter|reg_clock~0 File: C:/Projetos-FPGA/FerM32bIPS/modulos/modulo_input.v Line: 51
-        Info (176357): Destination node modulo_input:enter|reg_clock~7 File: C:/Projetos-FPGA/FerM32bIPS/modulos/modulo_input.v Line: 51
-Info (176353): Automatically promoted node tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ  File: C:/Projetos-FPGA/FerM32bIPS/modulos/display_lcd.v Line: 85
+        Info (176357): Destination node modulo_input:enter|reg_clock~0 File: C:/Users/ferna/workspace/FerM32bIPS/modulos/modulo_input.v Line: 51
+        Info (176357): Destination node modulo_input:enter|reg_clock~7 File: C:/Users/ferna/workspace/FerM32bIPS/modulos/modulo_input.v Line: 51
+Info (176353): Automatically promoted node tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ  File: C:/Users/ferna/workspace/FerM32bIPS/modulos/display_lcd.v Line: 85
     Info (176355): Automatically promoted destinations to use location or clock signal Global Clock
     Info (176356): Following destination nodes may be non-global or may not use global or regional clocks
-        Info (176357): Destination node tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ~0 File: C:/Projetos-FPGA/FerM32bIPS/modulos/display_lcd.v Line: 85
+        Info (176357): Destination node tela_lcd:tlcd|lcdlab3:lcd|display_lcd:u1|CLK_400HZ~0 File: C:/Users/ferna/workspace/FerM32bIPS/modulos/display_lcd.v Line: 85
 Warning (128008): Can't perform fitting netlist optimizations during fast fit compilation
 Info (176233): Starting register packing
 Info (176235): Finished register packing
     Extra Info (176219): No registers were packed into other blocks
-Info (171121): Fitter preparation operations ending: elapsed time is 00:00:19
+Info (171121): Fitter preparation operations ending: elapsed time is 00:00:18
 Info (14896): Fitter has disabled Advanced Physical Optimization because it is not supported for the current family.
 Info (170189): Fitter placement preparation operations beginning
 Info (170190): Fitter placement preparation operations ending: elapsed time is 00:00:06
 Info (170191): Fitter placement operations beginning
 Info (170137): Fitter placement was successful
-Info (170192): Fitter placement operations ending: elapsed time is 00:00:07
+Info (170192): Fitter placement operations ending: elapsed time is 00:00:06
 Info (170193): Fitter routing operations beginning
 Info (170195): Router estimated average interconnect usage is 3% of the available device resources
-    Info (170196): Router estimated peak interconnect usage is 36% of the available device resources in the region that extends from location X58_Y37 to location X68_Y48
-Info (170194): Fitter routing operations ending: elapsed time is 00:00:31
-Info (11888): Total time spent on timing analysis during the Fitter is 11.58 seconds.
+    Info (170196): Router estimated peak interconnect usage is 33% of the available device resources in the region that extends from location X46_Y24 to location X57_Y36
+Info (170194): Fitter routing operations ending: elapsed time is 00:00:29
+Info (11888): Total time spent on timing analysis during the Fitter is 11.35 seconds.
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
 Info (334003): Started post-fitting delay annotation
 Info (334004): Delay annotation completed successfully
-Info (11218): Fitter post-fit operations ending: elapsed time is 00:00:10
+Info (11218): Fitter post-fit operations ending: elapsed time is 00:00:08
 Warning (169064): Following 8 pins have no output enable or a GND or VCC output enable - later changes to this connectivity may change fitting results
-    Info (169065): Pin LCD_DATA[0] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[1] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[2] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[3] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[4] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[5] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[6] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-    Info (169065): Pin LCD_DATA[7] has a permanently enabled output enable File: C:/Projetos-FPGA/FerM32bIPS/modulos/unidade_processamento.v Line: 34
-Info (144001): Generated suppressed messages file C:/Projetos-FPGA/FerM32bIPS/output_files/Projeto-Processador.fit.smsg
+    Info (169065): Pin LCD_DATA[0] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[1] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[2] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[3] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[4] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[5] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[6] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+    Info (169065): Pin LCD_DATA[7] has a permanently enabled output enable File: C:/Users/ferna/workspace/FerM32bIPS/modulos/unidade_processamento.v Line: 47
+Info (144001): Generated suppressed messages file C:/Users/ferna/workspace/FerM32bIPS/output_files/Projeto-Processador.fit.smsg
 Info: Quartus Prime Fitter was successful. 0 errors, 8 warnings
-    Info: Peak virtual memory: 5849 megabytes
-    Info: Processing ended: Thu Jan 08 19:02:15 2026
-    Info: Elapsed time: 00:01:55
-    Info: Total CPU time (on all processors): 00:02:38
+    Info: Peak virtual memory: 5859 megabytes
+    Info: Processing ended: Mon Jan 26 11:09:40 2026
+    Info: Elapsed time: 00:01:39
+    Info: Total CPU time (on all processors): 00:02:28
 
 
 +----------------------------+
 ; Fitter Suppressed Messages ;
 +----------------------------+
-The suppressed messages can be found in C:/Projetos-FPGA/FerM32bIPS/output_files/Projeto-Processador.fit.smsg.
+The suppressed messages can be found in C:/Users/ferna/workspace/FerM32bIPS/output_files/Projeto-Processador.fit.smsg.
 
 

@@ -10,10 +10,15 @@ module unidade_processamento
     input           botao,               // Botão de entrada para outras funções
     input           botao_continue,      // Novo botão dedicado ao avanço manual (continue)
     input [13:0]    sw,                  // Switches para entrada de dados
-	input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
-	output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
+	 input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
+
+    /* diff */
+    // Entradas para teclado PS/2
+    //input           ps2_clk_in,          // Clock do teclado PS/2'
+    //input           ps2_data_in,         // Dados do teclado PS/2
 
     // Saídas para LEDs e Displays
+	 output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
     output [13:0]   led,                 // LEDs para saída de dados e status
     output [6:0]    display1,            // Displays de 7 segmentos
     output [6:0]    display2,
@@ -31,6 +36,14 @@ module unidade_processamento
     output          LCD_EN,
     output          LCD_RS,
     inout  [7:0]    LCD_DATA
+
+    /* diff */
+    // Saídas para VGA
+    //output [2:0]    disp_rgb,            // Saída RGB para VGA
+    //output          hsync,               // Sinal de sincronização horizontal
+    //output          vsync,               // Sinal de sincronização vertical
+    //output [7:0]    seg,               // segmentos do display 7-segmentos
+    //output [3:0]    dig                // dígitos do display 7-segmentos
 );
 
   // DECLARAÇÃO DE SINAIS INTERNOS
@@ -51,7 +64,7 @@ module unidade_processamento
   wire reg_dst, pc_funct, control_jump, beq, bne, halt;
   wire out, jal, disp, save_pc;
   wire get_pc_interrup, set_clock, get_interruption;
-  wire os_jump_to, os_save_return;
+  wire os_jump_to, os_save_return, frame_buffer_write;    // diff
   wire [1:0] in;
   wire [1:0] enable_clock;
   wire [2:0] alu_op;
@@ -193,6 +206,8 @@ module unidade_processamento
       .display_fp_1(display_fp1),
       .display_fp_2(display_fp2),
       .pc(endereco_instrucao),
+      //.seg(seg),    // diff
+      //.dig(dig),    // diff
       .fp(fp),
       .clk(entrada_clock)
   );
@@ -202,9 +217,12 @@ module unidade_processamento
       .botao(botao),
       .botao_continue(botao_continue),
       .sw(sw),
+      //.ps2_clk(ps2_clk_in),    // diff
+      //.ps2_data(ps2_data_in),    // diff
       .pause(enable_clock),
       .in(in),
       .resultado_entrada(resultado_entrada),
+      //.resultadoKeyBoard(resultadoKeyBoard),    // diff
       .saida_botao(saida_botao),
       .saida_botao_continue(),
       .saida_clock(clock)
@@ -236,6 +254,7 @@ module unidade_processamento
       .get_interruption(get_interruption),
       .os_jump_to(os_jump_to),
       .os_save_return(os_save_return)
+      //.frame_buffer_write(frame_buffer_write)    // diff
   );
 
   unidade_controle_ula ucula (
@@ -374,6 +393,7 @@ module unidade_processamento
       .dado_lido_entrada(resultado_entrada),
       .dado_memoria_ula(escolhido_multiplexador_jal),
       .in(in),
+      //.KeyboardInput(resultadoKeyBoard),    // diff
       .escolhido_multiplexador_entrada(escolhido_multiplexador_entrada)
   );
 
@@ -470,5 +490,17 @@ module unidade_processamento
       .int_clk(int_clk),
       .int_time(instrucao[15:0])
   );
+
+  /* diff */
+  /*modulo_vga mvga (
+      .clock(entrada_clock),
+      .wr_en(frame_buffer_write),
+      .wr_addr(saida_ula[16:0]), // Assuming saida_ula[16:0] is the address for framebuffer
+      .wr_data(br_dado2[2:0]), // We want to display the lower 3 bits of the ULA output
+      .disp_rgb(disp_rgb),
+      .hsync(hsync),
+      .vsync(vsync)
+  );
+  */
 
 endmodule

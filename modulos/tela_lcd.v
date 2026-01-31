@@ -69,6 +69,9 @@ module tela_lcd
     .tens(tens_bin_2),
     .ones(ones_bin_2)
   );
+  
+  wire GPIO_0;
+  wire GPIO_1;
 
   // Instância do controlador LCD
   // Se display_first=0, envia 0xFFFF (desligado)

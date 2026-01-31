@@ -1,6 +1,6 @@
 Assembler report for Projeto-Processador
-Thu Jan 08 19:02:25 2026
-Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
+Mon Jan 26 11:09:48 2026
+Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
 ---------------------
@@ -10,7 +10,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
   2. Assembler Summary
   3. Assembler Settings
   4. Assembler Generated Files
-  5. Assembler Device Options: C:/Projetos-FPGA/FerM32bIPS/output_files/Projeto-Processador.sof
+  5. Assembler Device Options: C:/Users/ferna/workspace/FerM32bIPS/output_files/Projeto-Processador.sof
   6. Assembler Messages
 
 
@@ -18,7 +18,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2019  Intel Corporation. All rights reserved.
+Copyright (C) 2020  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
@@ -38,7 +38,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Thu Jan 08 19:02:25 2026 ;
+; Assembler Status      ; Successful - Mon Jan 26 11:09:48 2026 ;
 ; Revision Name         ; Projeto-Processador                   ;
 ; Top-level Entity Name ; unidade_processamento                 ;
 ; Family                ; Cyclone IV E                          ;
@@ -53,23 +53,23 @@ https://fpgasoftware.intel.com/eula.
 +--------+---------+---------------+
 
 
-+------------------------------------------------------------------+
-; Assembler Generated Files                                        ;
-+------------------------------------------------------------------+
-; File Name                                                        ;
-+------------------------------------------------------------------+
-; C:/Projetos-FPGA/FerM32bIPS/output_files/Projeto-Processador.sof ;
-+------------------------------------------------------------------+
++--------------------------------------------------------------------------+
+; Assembler Generated Files                                                ;
++--------------------------------------------------------------------------+
+; File Name                                                                ;
++--------------------------------------------------------------------------+
+; C:/Users/ferna/workspace/FerM32bIPS/output_files/Projeto-Processador.sof ;
++--------------------------------------------------------------------------+
 
 
-+--------------------------------------------------------------------------------------------+
-; Assembler Device Options: C:/Projetos-FPGA/FerM32bIPS/output_files/Projeto-Processador.sof ;
-+----------------+---------------------------------------------------------------------------+
-; Option         ; Setting                                                                   ;
-+----------------+---------------------------------------------------------------------------+
-; JTAG usercode  ; 0x00D2F44C                                                                ;
-; Checksum       ; 0x00D2F44C                                                                ;
-+----------------+---------------------------------------------------------------------------+
++----------------------------------------------------------------------------------------------------+
+; Assembler Device Options: C:/Users/ferna/workspace/FerM32bIPS/output_files/Projeto-Processador.sof ;
++----------------+-----------------------------------------------------------------------------------+
+; Option         ; Setting                                                                           ;
++----------------+-----------------------------------------------------------------------------------+
+; JTAG usercode  ; 0x00D19EFB                                                                        ;
+; Checksum       ; 0x00D19EFB                                                                        ;
++----------------+-----------------------------------------------------------------------------------+
 
 
 +--------------------+
@@ -77,15 +77,16 @@ https://fpgasoftware.intel.com/eula.
 +--------------------+
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
-    Info: Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
-    Info: Processing started: Thu Jan 08 19:02:18 2026
+    Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+    Info: Processing started: Mon Jan 26 11:09:41 2026
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off Projeto-Processador -c Projeto-Processador
+Info (125069): Default assignment values were changed in the current version of the Quartus Prime software -- changes to default assignments values are contained in file c:/intelfpga_lite/20.1/quartus/bin64/assignment_defaults.qdf
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 4726 megabytes
-    Info: Processing ended: Thu Jan 08 19:02:25 2026
-    Info: Elapsed time: 00:00:07
+    Info: Peak virtual memory: 4719 megabytes
+    Info: Processing ended: Mon Jan 26 11:09:49 2026
+    Info: Elapsed time: 00:00:08
     Info: Total CPU time (on all processors): 00:00:07
 
 
