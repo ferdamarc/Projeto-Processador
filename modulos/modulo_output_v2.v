@@ -7,6 +7,10 @@ module modulo_output_v2
   input         enable_out,                       // Habilita captura de valor de saída
   input         enable_in,                        // Habilita exibição em LEDs de entrada
   input         switch_enable,                    // SW[13] controla LED 13
+
+  // Entradas de monitoramento
+  input  [9:0]  pc,                               // Program Counter atual
+  input  [31:0] fp,                               // Frame Pointer ($29)
   
   // Saídas para LEDs e displays
   output [13:0] led,                              // 14 LEDs
@@ -18,10 +22,12 @@ module modulo_output_v2
   output [6:0]  display_pc_2,                     // Display 2 do PC (dezenas)
   output [6:0]  display_fp_1,                     // Display 1 do FP (unidades)
   output [6:0]  display_fp_2,                     // Display 2 do FP (dezenas)
-  
-  // Entradas de monitoramento
-  input  [9:0]  pc,                               // Program Counter atual
-  input  [31:0] fp,                               // Frame Pointer ($29)
+
+  // Saídas PS2
+  output [7:0] seg,
+  output [3:0] dig,
+
+  // Clock
   input         clk                               // Clock de 50 MHz
 );
 
@@ -40,6 +46,13 @@ module modulo_output_v2
   reg [12:0] reg_leds;                            // LEDs 0-12 (dados)
   reg [31:0] valor_registrado;                    // Armazena valor capturado para exibição
   
+  wire [7:0] _seg;
+  reg  [3:0] _dig;
+
+  reg [1:0] digit_sel = 0;
+  reg [3:0] digit_values [3:0];
+  reg [19:0] clk_240hz_counter;
+
   // Inicialização
   initial begin
     valor_display_1   <= 4'd0;
@@ -53,6 +66,17 @@ module modulo_output_v2
     reg_led_13        <= 1'b0;
     reg_leds          <= 13'd0;
     valor_registrado  <= 32'd0;
+    clk_240hz_counter <= 20'd0;
+  end
+
+  always @(posedge clk) begin
+    // Contador para gerar enable a ~240Hz (50MHz / 240 ≈ 208333)
+    if (clk_240hz_counter >= 208333) begin
+      clk_240hz_counter <= 20'd0;
+      digit_sel <= digit_sel + 1; // Alterna entre os dígitos
+    end else begin
+      clk_240hz_counter <= clk_240hz_counter + 1;
+    end
   end
 
   // Atualização dos displays de valor e FP (sincronizado com clock_cpu)
@@ -71,10 +95,15 @@ module modulo_output_v2
     valor_display_2 <= (valor_registrado % 100) / 10;
     valor_display_3 <= (valor_registrado % 1000) / 100;
     valor_display_4 <= (valor_registrado % 10000) / 1000;
+
+    digit_values[0] <= valor_display_1;
+    digit_values[1] <= valor_display_2;
+    digit_values[2] <= valor_display_3;
+    digit_values[3] <= valor_display_4;
   end
 
   // Atualização dos displays de PC e LEDs (usando clock de 50MHz)
-  always @(posedge clk) begin
+  always @(posedge clk_240hz_counter) begin
     // Mostra os últimos dois dígitos do PC
     valor_display_pc_1 <= pc % 10;
     valor_display_pc_2 <= (pc % 100) / 10;
@@ -90,7 +119,19 @@ module modulo_output_v2
     end
   end
 
-  // Instâncias dos conversores BCD → 7 segmentos para valores de saída
+  always @(posedge clk) begin
+    case (digit_sel)
+      2'b00: _dig <= 4'b1110; // Ativa o primeiro dígito
+      2'b01: _dig <= 4'b1101; // Ativa o segundo dígito
+      2'b10: _dig <= 4'b1011; // Ativa o terceiro dígito
+      2'b11: _dig <= 4'b0111; // Ativa o quarto dígito
+      default: begin
+        _dig <= 4'b1111; // Desativa todos os dígitos
+      end
+    endcase
+  end
+
+  // Instâncias dos conversores BCD para valores de saída
   display_7segmentos bcd_1 (
     .bcd(valor_display_1),
     .seg(display_1)
@@ -111,7 +152,6 @@ module modulo_output_v2
     .seg(display_4)
   );
 
-  // Conversores BCD → 7 segmentos para PC
   display_7segmentos bcd_pc_1 (
     .bcd(valor_display_pc_1),
     .seg(display_pc_1)
@@ -122,7 +162,6 @@ module modulo_output_v2
     .seg(display_pc_2)
   );
 
-  // Conversores BCD → 7 segmentos para FP
   display_7segmentos bcd_fp_1 (
     .bcd(valor_display_fp_1),
     .seg(display_fp_1)
@@ -133,7 +172,14 @@ module modulo_output_v2
     .seg(display_fp_2)
   );
 
+  display_7segmentos bcd_seg (
+    .bcd(digit_values[digit_sel]),
+    .seg(_seg)
+  );
+
   // Atribuição dos LEDs (LED13 = status SW[13], LEDs 0-12 = dados)
   assign led = {reg_led_13, reg_leds[12:0]};
+  assign seg = {1'd1, _seg[6:0]};
+  assign dig = _dig;
 
 endmodule
