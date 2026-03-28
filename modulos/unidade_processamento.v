@@ -442,9 +442,10 @@ module unidade_processamento
   ) offset_base_module (
       .endereco_entrada(escolhido_multiplexador_jump_reg),
       .reg_base(offset_base),
-      .is_jump(control_jump),         // JUMP ou JAL
-      .is_branch(control_branch),     // BEQ ou BNE efetivo
-      .is_jr(jr | jalr),              // JR ou JALR
+      .is_jump(control_jump),                           // JUMP ou JAL
+      .is_branch(control_branch),                       // BEQ ou BNE efetivo
+      .is_jr(jr | jalr),                                // JR ou JALR
+      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 1000
       .endereco_saida(endereco_com_offset)
   );
 
