@@ -441,7 +441,6 @@ module unidade_processamento
       .DATA_WIDTH(DATA_WIDTH)
   ) offset_base_module (
       .endereco_entrada(escolhido_multiplexador_jump_reg),
-      .pc_atual(endereco_instrucao),
       .reg_base(offset_base),
       .is_jump(control_jump),         // JUMP ou JAL
       .is_branch(control_branch),     // BEQ ou BNE efetivo
