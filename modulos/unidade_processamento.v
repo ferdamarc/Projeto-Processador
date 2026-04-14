@@ -2,7 +2,8 @@ module unidade_processamento
 #(
     parameter DATA_WIDTH = 32,          // Largura dos dados
     parameter INSTR_ADDR_WIDTH = 13,     // Largura do endereço da ROM/MI
-    parameter DATA_ADDR_WIDTH = 13      // Largura do endereço da RAM/MD
+    parameter DATA_ADDR_WIDTH = 13,      // Largura do endereço da RAM/MD
+    parameter PROGRS_INIT = 13'd1000     // Endereço de início dos programas
 )
 (
     // Entradas Principais
@@ -12,10 +13,9 @@ module unidade_processamento
     input [13:0]    sw,                  // Switches para entrada de dados
 	 input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
 
-    /* diff */
     // Entradas para teclado PS/2
-    //input           ps2_clk_in,          // Clock do teclado PS/2'
-    //input           ps2_data_in,         // Dados do teclado PS/2
+    input           ps2_clk_in,          // Clock do teclado PS/2
+    input           ps2_data_in,         // Dados do teclado PS/2
 
     // Saídas para LEDs e Displays
 	 output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
@@ -101,6 +101,7 @@ module unidade_processamento
 
   // Sinais de Entrada/Saída
   wire [13:0] resultado_entrada;
+  wire [7:0]  ps2_data_out;
   wire saida_botao;
 
   // Sinais dos Multiplexadores
@@ -189,7 +190,10 @@ module unidade_processamento
   end
 
   // INSTANCIAÇÃO DOS MÓDULOS
-  modulo_output_v2 exit (
+  modulo_output_v2 # (
+    .DATA_WIDTH(DATA_WIDTH)
+  )
+  exit (
       .valor_saida(escolhido_multiplexador_saida),
       .halt(halt),
       .clock_cpu(clock),
@@ -217,15 +221,15 @@ module unidade_processamento
       .botao(botao),
       .botao_continue(botao_continue),
       .sw(sw),
-      //.ps2_clk(ps2_clk_in),    // diff
-      //.ps2_data(ps2_data_in),    // diff
+      .ps2_clk(ps2_clk_in),
+      .ps2_data(ps2_data_in),
       .pause(enable_clock),
       .in(in),
       .resultado_entrada(resultado_entrada),
-      //.resultadoKeyBoard(resultadoKeyBoard),    // diff
       .saida_botao(saida_botao),
       .saida_botao_continue(),
-      .saida_clock(clock)
+      .saida_clock(clock),
+      .ps2_data_out(ps2_data_out)
   );
 
   unidade_controle uc (
@@ -393,7 +397,7 @@ module unidade_processamento
       .dado_lido_entrada(resultado_entrada),
       .dado_memoria_ula(escolhido_multiplexador_jal),
       .in(in),
-      //.KeyboardInput(resultadoKeyBoard),    // diff
+      .dado_lido_keyboard(ps2_data_out),
       .escolhido_multiplexador_entrada(escolhido_multiplexador_entrada)
   );
 
