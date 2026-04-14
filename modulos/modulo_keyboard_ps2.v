@@ -8,12 +8,13 @@ module PS2Key (
   reg  [7:0] raw_scancode;  
   wire [7:0] decoded_ascii;  
 
-  
+  // Regs and wires for synchronizing PS/2 signals
   reg ps2_clk_sync1, ps2_clk_sync2;
   reg ps2_dat_sync1, ps2_dat_sync2;
   wire ps2_clk_synced = ps2_clk_sync2;  
   wire ps2_dat_synced = ps2_dat_sync2;  
 
+  // Synchronize PS/2 signals to internal clock domain
   always @(posedge clk) begin
     ps2_clk_sync1 <= PS2_clk;
     ps2_clk_sync2 <= ps2_clk_sync1;
@@ -21,7 +22,6 @@ module PS2Key (
     ps2_dat_sync2 <= ps2_dat_sync1;
   end
 
-  
   reg  ps2_clk_prev;
   wire ps2_clk_falling_edge;
   always @(posedge clk) begin
@@ -29,7 +29,7 @@ module PS2Key (
   end
   assign ps2_clk_falling_edge = ps2_clk_prev & ~ps2_clk_synced;
 
-  
+  // Finite State Machine states
   parameter IDLE = 0;
   parameter RECEIVING = 1;
   parameter CHECK_STOP = 2;
@@ -47,7 +47,7 @@ module PS2Key (
   reg       break_code_expected;  
 
   initial begin
-    state               = IDLE;
+    state               = IDLE; // Initial state of FSM
     bit_count           = 0;
     data_buffer         = 0;
     parity_bit          = 0;
@@ -82,6 +82,7 @@ module PS2Key (
           end
         end
 
+        // State for receiving the 8 data bits and parity bit
         RECEIVING: begin
           if (bit_count < 8) begin  
             data_buffer[bit_count] <= ps2_dat_synced;
@@ -96,6 +97,7 @@ module PS2Key (
           end
         end
 
+        // State for checking the stop bit and validating the received data
         CHECK_STOP: begin
           if (ps2_dat_synced == 1) begin  
             
@@ -120,15 +122,15 @@ module PS2Key (
               
             end
           end else begin
-            
             error_flag <= 1;
           end
 
+          // Return to IDLE state after processing the received data
           state     <= IDLE;  
           bit_count <= 0;
         end
 
-
+        // Default case to handle unexpected states
         default: begin
           state <= IDLE;
         end
@@ -137,11 +139,11 @@ module PS2Key (
 
   end  
 
-  
+  // Instantiate the scancode decoder module
   scancode_decoder i_scancode_decoder (
       .clk(clk),
-      .scan_code(raw_scancode),  
-      .ascii_code(decoded_ascii)  
+      .scan_code(raw_scancode),
+      .ascii_code(decoded_ascii)
   );
 
 endmodule
