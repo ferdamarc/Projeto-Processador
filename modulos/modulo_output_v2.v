@@ -1,7 +1,12 @@
 module modulo_output_v2
+#(
+  parameter DATA_WIDTH = 32,                      // Largura do barramento de dados
+  parameter PC_WIDTH   = 13,                      // Largura do PC (idealmente igual à MI)
+  parameter FP_WIDTH   = DATA_WIDTH               // Largura do frame pointer
+)
 (
   // Entradas de dados
-  input  [31:0] valor_saida,                      // Valor a ser exibido (instrução OUT)
+  input  [DATA_WIDTH-1:0] valor_saida,           // Valor a ser exibido (instrução OUT)
   input         halt,                             // Sinal de HALT (não utilizado atualmente)
   input         clock_cpu,                        // Clock sincronizado com CPU
   input         enable_out,                       // Habilita captura de valor de saída
@@ -9,8 +14,8 @@ module modulo_output_v2
   input         switch_enable,                    // SW[13] controla LED 13
 
   // Entradas de monitoramento
-  input  [9:0]  pc,                               // Program Counter atual
-  input  [31:0] fp,                               // Frame Pointer ($29)
+  input  [PC_WIDTH-1:0] pc,                      // Program Counter atual
+  input  [FP_WIDTH-1:0] fp,                      // Frame Pointer ($29)
   
   // Saídas para LEDs e displays
   output [13:0] led,                              // 14 LEDs
@@ -44,7 +49,7 @@ module modulo_output_v2
   // Registradores para LEDs
   reg        reg_led_13;                          // LED 13 (status SW[13])
   reg [12:0] reg_leds;                            // LEDs 0-12 (dados)
-  reg [31:0] valor_registrado;                    // Armazena valor capturado para exibição
+  reg [DATA_WIDTH-1:0] valor_registrado;         // Armazena valor capturado para exibição
   
   wire [7:0] _seg;
   reg  [3:0] _dig;
@@ -65,7 +70,7 @@ module modulo_output_v2
     valor_display_fp_2 <= 4'd0;
     reg_led_13        <= 1'b0;
     reg_leds          <= 13'd0;
-    valor_registrado  <= 32'd0;
+    valor_registrado  <= {DATA_WIDTH{1'b0}};
     clk_240hz_counter <= 20'd0;
   end
 
