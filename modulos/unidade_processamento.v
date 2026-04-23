@@ -6,7 +6,7 @@ module unidade_processamento
     parameter PROGRS_INIT = 13'd1000,           // Endereço de início dos programas
     parameter VGA_PIXEL_SCALING_FACTOR = 16     // Fator de escala usado para diminuir o buffer
 )
-(
+( 
     // Entradas Principais
     input           entrada_clock,              // Clock principal de 50MHz da placa
     input           botao,                      // Botão de entrada para outras funções
@@ -36,15 +36,12 @@ module unidade_processamento
     output          LCD_RW,
     output          LCD_EN,
     output          LCD_RS,
-    inout  [7:0]    LCD_DATA
+    inout  [7:0]    LCD_DATA,
 
-    /* diff */
     // Saídas para VGA
-    //output [2:0]    disp_rgb,            // Saída RGB para VGA
-    //output          hsync,               // Sinal de sincronização horizontal
-    //output          vsync,               // Sinal de sincronização vertical
-    //output [7:0]    seg,               // segmentos do display 7-segmentos
-    //output [3:0]    dig                // dígitos do display 7-segmentos
+    output [2:0]    disp_rgb,                   // Protocolo VGA com até 8 cores
+    output          hsync,
+    output          vsync
 );
 
   // DECLARAÇÃO DE SINAIS INTERNOS
@@ -258,8 +255,8 @@ module unidade_processamento
       .set_clock(set_clock),
       .get_interruption(get_interruption),
       .os_jump_to(os_jump_to),
-      .os_save_return(os_save_return)
-      //.frame_buffer_write(frame_buffer_write)    // diff
+      .os_save_return(os_save_return),
+      .frame_buffer_write(frame_buffer_write)
   );
 
   unidade_controle_ula ucula (
@@ -496,16 +493,16 @@ module unidade_processamento
       .int_time(instrucao[15:0])
   );
 
-  /* diff */
-  /*modulo_vga mvga (
+  modulo_vga #(
+      .PIXEL_SCALING_FACTOR(VGA_PIXEL_SCALING_FACTOR)
+  ) mvga (
       .clock(entrada_clock),
       .wr_en(frame_buffer_write),
-      .wr_addr(saida_ula[16:0]), // Assuming saida_ula[16:0] is the address for framebuffer
-      .wr_data(br_dado2[2:0]), // We want to display the lower 3 bits of the ULA output
+      .wr_addr(saida_ula[16:0]),
+      .wr_data(br_dado2[2:0]),
       .disp_rgb(disp_rgb),
       .hsync(hsync),
       .vsync(vsync)
   );
-  */
 
 endmodule

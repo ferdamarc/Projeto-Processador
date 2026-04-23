@@ -1,105 +1,100 @@
-module VGA (
-    input wire clock,         // System clock (e.g., 50 MHz)
-    input wire wr_en,         // Write enable for framebuffer
-    input wire [16:0] wr_addr, // Write address for framebuffer
-    input wire [2:0] wr_data,  // Write data for framebuffer
-    output wire [2:0] disp_RGB,// RGB data to display
-    output wire hsync,        // Horizontal sync
-    output wire vsync         // Vertical sync
+module modulo_vga #(
+    parameter PIXEL_SCALING_FACTOR = 16,
+    parameter HSYNC_END  = 10'd96,
+    parameter HDAT_BEGIN = 10'd144,
+    parameter HDAT_END   = 10'd784,
+    parameter HPIXEL_END = 10'd799,
+    parameter VSYNC_END  = 10'd2,
+    parameter VDAT_BEGIN = 10'd35,
+    parameter VDAT_END   = 10'd515,
+    parameter VLINE_END  = 10'd524
+)(
+    input  wire       clock,
+    input  wire       wr_en,
+    input  wire [16:0] wr_addr,
+    input  wire [2:0] wr_data,
+    output wire [2:0] disp_rgb,
+    output wire       hsync,
+    output wire       vsync
 );
 
-    // Parameter to control pixel scaling.
-    // This factor scales down from the BASE_FB_LOGICAL_WIDTH/HEIGHT.
-    // PIXEL_SCALING_FACTOR = 1: Framebuffer is 640x480 (each FB pixel is 1x1 screen pixels)
-    // PIXEL_SCALING_FACTOR = 2: Framebuffer is 320x240 (each FB pixel is 2x2 screen pixels)
-    // PIXEL_SCALING_FACTOR = 4: Framebuffer is 160x120 (each FB pixel is 4x4 screen pixels)
-    // PIXEL_SCALING_FACTOR = 8: Framebuffer is 80x60 (each FB pixel is 8x8 screen pixels)
-    // Ensure BASE_FB_LOGICAL_WIDTH/HEIGHT are divisible by this factor.
-    parameter PIXEL_SCALING_FACTOR = 16;
-
-    // Base logical framebuffer dimensions (before PIXEL_SCALING_FACTOR is applied)
-    localparam BASE_FB_LOGICAL_WIDTH = 640;
+    localparam BASE_FB_LOGICAL_WIDTH  = 640;
     localparam BASE_FB_LOGICAL_HEIGHT = 480;
-
-    // Actual framebuffer dimensions after applying PIXEL_SCALING_FACTOR
     localparam ACTUAL_FB_WIDTH = BASE_FB_LOGICAL_WIDTH / PIXEL_SCALING_FACTOR;
     localparam ACTUAL_FB_HEIGHT = BASE_FB_LOGICAL_HEIGHT / PIXEL_SCALING_FACTOR;
     localparam ACTUAL_FB_ADDR_WIDTH = $clog2(ACTUAL_FB_WIDTH * ACTUAL_FB_HEIGHT);
 
-    reg [9:0] hcount, vcount; // Horizontal and vertical screen counters (pixel clock rate)
-    wire hcount_ov, vcount_ov, dat_act;
-    reg vga_clk; // VGA pixel clock
+    reg [9:0] hcount;
+    reg [9:0] vcount;
+    reg vga_clk;
 
-    // Framebuffer signals
-    wire [ACTUAL_FB_ADDR_WIDTH-1:0] rd_addr_internal; // Read address for the new smaller framebuffer
-    wire [2:0] fb_data;          // Data read from framebuffer
+    wire hcount_ov;
+    wire vcount_ov;
+    wire dat_act;
+    wire [ACTUAL_FB_ADDR_WIDTH-1:0] rd_addr_internal;
+    wire [ACTUAL_FB_ADDR_WIDTH-1:0] wr_addr_internal;
+    wire [2:0] fb_data;
+    wire [9:0] screen_h_coord;
+    wire [9:0] screen_v_coord;
+    wire [9:0] fb_access_h_idx;
+    wire [9:0] fb_access_v_idx;
 
-    // Timing parameters (standard 640x480 @ 60Hz, pixel clock ~25MHz)
-    parameter hsync_end  = 10'd95,
-              hdat_begin = 10'd143,
-              hdat_end   = 10'd783,
-              hpixel_end = 10'd799;
-
-    parameter vsync_end  = 10'd1,
-              vdat_begin = 10'd34,
-              vdat_end   = 10'd514,
-              vline_end  = 10'd524;
-
+    assign wr_addr_internal = wr_addr[ACTUAL_FB_ADDR_WIDTH-1:0];
 
     framebuffer #(
         .DATA_WIDTH(3),
         .ADDR_WIDTH(ACTUAL_FB_ADDR_WIDTH)
     ) fb (
-        .clk(vga_clk), // Use the VGA pixel clock for framebuffer operations
+        .clk(vga_clk),
         .we(wr_en),
-        .write_addr(wr_addr), 
-        .data(wr_data),       
+        .write_addr(wr_addr_internal),
+        .data(wr_data),
         .read_addr(rd_addr_internal),
         .q(fb_data)
     );
 
-    // Read address calculation
-    // screen_h_coord: 0-639 (current horizontal pixel on screen within active area)
-    // screen_v_coord: 0-479 (current vertical line on screen within active area)
-    wire [9:0] screen_h_coord = (hcount >= hdat_begin && hcount < hdat_end) ? (hcount - hdat_begin) : 0;
-    wire [9:0] screen_v_coord = (vcount >= vdat_begin && vcount < vdat_end) ? (vcount - vdat_begin) : 0;
+    assign screen_h_coord = dat_act ? (hcount - HDAT_BEGIN) : 10'd0;
+    assign screen_v_coord = dat_act ? (vcount - VDAT_BEGIN) : 10'd0;
+    assign fb_access_h_idx = screen_h_coord / PIXEL_SCALING_FACTOR;
+    assign fb_access_v_idx = screen_v_coord / PIXEL_SCALING_FACTOR;
+    assign rd_addr_internal = (fb_access_v_idx * ACTUAL_FB_WIDTH) + fb_access_h_idx;
 
-    // fb_access_h_idx/v_idx: coordinates for the actual (scaled) framebuffer
-    // These are derived by scaling the screen coordinates by PIXEL_SCALING_FACTOR.
-    wire [9:0] fb_access_h_idx = screen_h_coord / PIXEL_SCALING_FACTOR;
-    wire [9:0] fb_access_v_idx = screen_v_coord / PIXEL_SCALING_FACTOR;
+    initial begin
+        vga_clk = 1'b0;
+        hcount = 10'd0;
+        vcount = 10'd0;
+    end
 
-    // Calculate the 1D address for the framebuffer read
-    assign rd_addr_internal = fb_access_v_idx * ACTUAL_FB_WIDTH + fb_access_h_idx;
-
-    // Clock divider for VGA pixel clock (e.g., 50MHz system clock to 25MHz VGA clock)
     always @(posedge clock) begin
         vga_clk <= ~vga_clk;
     end
 
-    // Horizontal counter (counts at vga_clk rate)
-    always @(posedge vga_clk) begin
-        if (hcount_ov) hcount <= 10'd0;
-        else hcount <= hcount + 10'd1;
-    end
-    assign hcount_ov = (hcount == hpixel_end);
-
-    // Vertical counter (increments when a horizontal line ends)
     always @(posedge vga_clk) begin
         if (hcount_ov) begin
-            if (vcount_ov) vcount <= 10'd0;
-            else vcount <= vcount + 10'd1;
+            hcount <= 10'd0;
+        end else begin
+            hcount <= hcount + 10'd1;
         end
     end
-    assign vcount_ov = (vcount == vline_end);
 
-    // Sync signals and active data region
-    assign dat_act = ((hcount >= hdat_begin) && (hcount < hdat_end))
-                  && ((vcount >= vdat_begin) && (vcount < vdat_end));
-    assign hsync = !((hcount >= 0) && (hcount < hsync_end)); // Active low
-    assign vsync = !((vcount >= 0) && (vcount < vsync_end)); // Active low
+    assign hcount_ov = (hcount == HPIXEL_END);
 
-    // RGB output: display framebuffer data during active region, else black
-    assign disp_RGB = dat_act ? fb_data : 3'h0;
+    always @(posedge vga_clk) begin
+        if (hcount_ov) begin
+            if (vcount_ov) begin
+                vcount <= 10'd0;
+            end else begin
+                vcount <= vcount + 10'd1;
+            end
+        end
+    end
+
+    assign vcount_ov = (vcount == VLINE_END);
+    assign dat_act = ((hcount >= HDAT_BEGIN) && (hcount < HDAT_END)) &&
+                     ((vcount >= VDAT_BEGIN) && (vcount < VDAT_END));
+
+    assign hsync = ~((hcount >= 10'd0) && (hcount < HSYNC_END));
+    assign vsync = ~((vcount >= 10'd0) && (vcount < VSYNC_END));
+    assign disp_rgb = dat_act ? fb_data : 3'b000;
 
 endmodule
