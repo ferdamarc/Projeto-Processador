@@ -1,26 +1,27 @@
 module unidade_processamento 
 #(
-    parameter DATA_WIDTH = 32,          // Largura dos dados
-    parameter INSTR_ADDR_WIDTH = 13,     // Largura do endereço da ROM/MI
-    parameter DATA_ADDR_WIDTH = 13,      // Largura do endereço da RAM/MD
-    parameter PROGRS_INIT = 13'd1000     // Endereço de início dos programas
+    parameter DATA_WIDTH = 32,                  // Largura dos dados
+    parameter INSTR_ADDR_WIDTH = 13,            // Largura do endereço da ROM/MI
+    parameter DATA_ADDR_WIDTH = 13,             // Largura do endereço da RAM/MD
+    parameter PROGRS_INIT = 13'd1000,           // Endereço de início dos programas
+    parameter VGA_PIXEL_SCALING_FACTOR = 16     // Fator de escala usado para diminuir o buffer
 )
 (
     // Entradas Principais
-    input           entrada_clock,       // Clock principal de 50MHz da placa
-    input           botao,               // Botão de entrada para outras funções
-    input           botao_continue,      // Novo botão dedicado ao avanço manual (continue)
-    input [13:0]    sw,                  // Switches para entrada de dados
-	 input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
+    input           entrada_clock,              // Clock principal de 50MHz da placa
+    input           botao,                      // Botão de entrada para outras funções
+    input           botao_continue,             // Novo botão dedicado ao avanço manual (continue)
+    input [13:0]    sw,                         // Switches para entrada de dados
+	input           loop_enable,                 // Switch que permite a execução em loop do programa; não reinicia o sistema
 
     // Entradas para teclado PS/2
-    input           ps2_clk_in,          // Clock do teclado PS/2
-    input           ps2_data_in,         // Dados do teclado PS/2
+    input           ps2_clk_in,                 // Clock do teclado PS/2
+    input           ps2_data_in,                // Dados do teclado PS/2
 
     // Saídas para LEDs e Displays
-	 output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
-    output [13:0]   led,                 // LEDs para saída de dados e status
-    output [6:0]    display1,            // Displays de 7 segmentos
+	output          led_loop_status,            // LED utilizado apenas para mostrar que o modo loop está ativado
+    output [13:0]   led,                        // LEDs para saída de dados e status
+    output [6:0]    display1,                   // Displays de 7 segmentos
     output [6:0]    display2,
     output [6:0]    display3,
     output [6:0]    display4,
@@ -30,7 +31,7 @@ module unidade_processamento
     output [6:0]    display_fp2,
       
     // Interface com o Display LCD
-    output          LCD_ON,
+    output          LCD_ON,                     // Display LCD
     output          LCD_BLON,
     output          LCD_RW,
     output          LCD_EN,
