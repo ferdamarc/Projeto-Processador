@@ -1,21 +1,27 @@
 module unidade_processamento 
 #(
-    parameter DATA_WIDTH = 32,          // Largura dos dados
-    parameter INSTR_ADDR_WIDTH = 13,     // Largura do endereço da ROM/MI
-    parameter DATA_ADDR_WIDTH = 13      // Largura do endereço da RAM/MD
+    parameter DATA_WIDTH = 32,                  // Largura dos dados
+    parameter INSTR_ADDR_WIDTH = 13,            // Largura do endereço da ROM/MI
+    parameter DATA_ADDR_WIDTH = 13,             // Largura do endereço da RAM/MD
+    parameter PROGRS_INIT = 13'd1000,           // Endereço de início dos programas
+    parameter VGA_PIXEL_SCALING_FACTOR = 16     // Fator de escala usado para diminuir o buffer
 )
-(
+( 
     // Entradas Principais
-    input           entrada_clock,       // Clock principal de 50MHz da placa
-    input           botao,               // Botão de entrada para outras funções
-    input           botao_continue,      // Novo botão dedicado ao avanço manual (continue)
-    input [13:0]    sw,                  // Switches para entrada de dados
-	input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
-	output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
+    input           entrada_clock,              // Clock principal de 50MHz da placa
+    input           botao,                      // Botão de entrada para outras funções
+    input           botao_continue,             // Novo botão dedicado ao avanço manual (continue)
+    input [13:0]    sw,                         // Switches para entrada de dados
+	input           loop_enable,                 // Switch que permite a execução em loop do programa; não reinicia o sistema
+
+    // Entradas para teclado PS/2
+    input           ps2_clk_in,                 // Clock do teclado PS/2
+    input           ps2_data_in,                // Dados do teclado PS/2
 
     // Saídas para LEDs e Displays
-    output [13:0]   led,                 // LEDs para saída de dados e status
-    output [6:0]    display1,            // Displays de 7 segmentos
+	output          led_loop_status,            // LED utilizado apenas para mostrar que o modo loop está ativado
+    output [13:0]   led,                        // LEDs para saída de dados e status
+    output [6:0]    display1,                   // Displays de 7 segmentos
     output [6:0]    display2,
     output [6:0]    display3,
     output [6:0]    display4,
@@ -25,12 +31,17 @@ module unidade_processamento
     output [6:0]    display_fp2,
       
     // Interface com o Display LCD
-    output          LCD_ON,
+    output          LCD_ON,                     // Display LCD
     output          LCD_BLON,
     output          LCD_RW,
     output          LCD_EN,
     output          LCD_RS,
-    inout  [7:0]    LCD_DATA
+    inout  [7:0]    LCD_DATA,
+
+    // Saídas para VGA
+    output [2:0]    disp_rgb,                   // Protocolo VGA com até 8 cores
+    output          hsync,
+    output          vsync
 );
 
   // DECLARAÇÃO DE SINAIS INTERNOS
@@ -51,7 +62,7 @@ module unidade_processamento
   wire reg_dst, pc_funct, control_jump, beq, bne, halt;
   wire out, jal, disp, save_pc;
   wire get_pc_interrup, set_clock, get_interruption;
-  wire os_jump_to, os_save_return;
+  wire os_jump_to, os_save_return, frame_buffer_write;    // diff
   wire [1:0] in;
   wire [1:0] enable_clock;
   wire [2:0] alu_op;
@@ -88,6 +99,7 @@ module unidade_processamento
 
   // Sinais de Entrada/Saída
   wire [13:0] resultado_entrada;
+  wire [7:0]  ps2_data_out;
   wire saida_botao;
 
   // Sinais dos Multiplexadores
@@ -176,7 +188,10 @@ module unidade_processamento
   end
 
   // INSTANCIAÇÃO DOS MÓDULOS
-  modulo_output_v2 exit (
+  modulo_output_v2 # (
+    .DATA_WIDTH(DATA_WIDTH)
+  )
+  exit (
       .valor_saida(escolhido_multiplexador_saida),
       .halt(halt),
       .clock_cpu(clock),
@@ -193,6 +208,8 @@ module unidade_processamento
       .display_fp_1(display_fp1),
       .display_fp_2(display_fp2),
       .pc(endereco_instrucao),
+      //.seg(seg),    // diff
+      //.dig(dig),    // diff
       .fp(fp),
       .clk(entrada_clock)
   );
@@ -202,12 +219,15 @@ module unidade_processamento
       .botao(botao),
       .botao_continue(botao_continue),
       .sw(sw),
+      .ps2_clk(ps2_clk_in),
+      .ps2_data(ps2_data_in),
       .pause(enable_clock),
       .in(in),
       .resultado_entrada(resultado_entrada),
       .saida_botao(saida_botao),
       .saida_botao_continue(),
-      .saida_clock(clock)
+      .saida_clock(clock),
+      .ps2_data_out(ps2_data_out)
   );
 
   unidade_controle uc (
@@ -235,7 +255,8 @@ module unidade_processamento
       .set_clock(set_clock),
       .get_interruption(get_interruption),
       .os_jump_to(os_jump_to),
-      .os_save_return(os_save_return)
+      .os_save_return(os_save_return),
+      .frame_buffer_write(frame_buffer_write)
   );
 
   unidade_controle_ula ucula (
@@ -374,6 +395,7 @@ module unidade_processamento
       .dado_lido_entrada(resultado_entrada),
       .dado_memoria_ula(escolhido_multiplexador_jal),
       .in(in),
+      .dado_lido_keyboard(ps2_data_out),
       .escolhido_multiplexador_entrada(escolhido_multiplexador_entrada)
   );
 
@@ -421,11 +443,11 @@ module unidade_processamento
       .DATA_WIDTH(DATA_WIDTH)
   ) offset_base_module (
       .endereco_entrada(escolhido_multiplexador_jump_reg),
-      .pc_atual(endereco_instrucao),
       .reg_base(offset_base),
-      .is_jump(control_jump),         // JUMP ou JAL
-      .is_branch(control_branch),     // BEQ ou BNE efetivo
-      .is_jr(jr | jalr),              // JR ou JALR
+      .is_jump(control_jump),                           // JUMP ou JAL
+      .is_branch(control_branch),                       // BEQ ou BNE efetivo
+      .is_jr(jr | jalr),                                // JR ou JALR
+      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 1000
       .endereco_saida(endereco_com_offset)
   );
 
@@ -469,6 +491,18 @@ module unidade_processamento
       .int_halt(int_halt),
       .int_clk(int_clk),
       .int_time(instrucao[15:0])
+  );
+
+  modulo_vga #(
+      .PIXEL_SCALING_FACTOR(VGA_PIXEL_SCALING_FACTOR)
+  ) mvga (
+      .clock(entrada_clock),
+      .wr_en(frame_buffer_write),
+      .wr_addr(saida_ula[16:0]),
+      .wr_data(br_dado2[2:0]),
+      .disp_rgb(disp_rgb),
+      .hsync(hsync),
+      .vsync(vsync)
   );
 
 endmodule

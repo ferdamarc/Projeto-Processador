@@ -6,11 +6,11 @@ module modulo_offset_base
 (
   // Entradas
   input  wire [ADDR_WIDTH-1:0]  endereco_entrada, // Endereço calculado (do multiplex_jr)
-  input  wire [ADDR_WIDTH-1:0]  pc_atual,         // PC atual
   input  wire [DATA_WIDTH-1:0]  reg_base,         // Valor do registrador $24 (offset base)
   input  wire                   is_jump,          // Indica instrução JUMP ou JAL
   input  wire                   is_branch,        // Indica branch efetivo (ControlBranch)
   input  wire                   is_jr,            // Indica JR ou JALR
+  input  wire                   user_mode,        // Indica se o sistema está em modo user
   
   // Saídas
   output wire [ADDR_WIDTH-1:0]  endereco_saida    // Endereço final com offset aplicado
@@ -24,14 +24,14 @@ module modulo_offset_base
   // Neste caso, o offset é aplicado pois o SO está em controle absoluto
   // e é o primeiro programa na memória de instruções
   always @(*) begin
-    if (is_jr & (pc_atual >= 13'd1000)) begin
+    if (is_jr & user_mode) begin
       // JR/JALR: o endereço já vem absoluto do registrador, não soma offset
       // O programador/SO é responsável por colocar o endereço correto em RS
       resultado = endereco_entrada;
-    end else if (is_jump & (pc_atual >= 13'd1000)) begin
+    end else if (is_jump & user_mode) begin
       // JUMP/JAL: soma o offset base ao endereço de 26 bits da instrução
       resultado = endereco_entrada + reg_base[ADDR_WIDTH-1:0];
-    end else if (is_branch & (pc_atual >= 13'd1000)) begin
+    end else if (is_branch & user_mode) begin
       // BEQ/BNE efetivo: o endereço já é o imediato, soma o offset base
       resultado = endereco_entrada + reg_base[ADDR_WIDTH-1:0];
     end else begin

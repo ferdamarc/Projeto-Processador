@@ -1,6 +1,10 @@
-module bcd (
+module bcd
+#(
+  parameter BINARY_WIDTH = 13                     // Largura do valor binário de entrada
+)
+(
   // Entradas
-  input  [12:0] binary,                           // Valor binário (0-8191)
+  input  [BINARY_WIDTH-1:0] binary,               // Valor binário de entrada
   
   // Saídas
   output reg [3:0] thousands,                     // Dígito dos milhares
@@ -21,7 +25,7 @@ module bcd (
     ones      = 4'd0;
     
     // Itera sobre cada bit do número binário (MSB para LSB)
-    for (i = 12; i >= 0; i = i - 1) begin
+    for (i = BINARY_WIDTH-1; i >= 0; i = i - 1) begin
       // Adiciona 3 aos dígitos BCD que são >= 5 (correção BCD)
       if (thousands >= 4'd5)
         thousands = thousands + 4'd3;

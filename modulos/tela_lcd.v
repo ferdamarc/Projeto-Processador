@@ -1,8 +1,14 @@
 module tela_lcd
+#(
+  parameter DATA_WIDTH = 32,                      // Largura dos dados exibidos
+  parameter BCD_INPUT_WIDTH = 13,                 // Quantos bits dos dados entram na conversão BCD
+  parameter IMMEDIATE_WIDTH = 16,                 // Largura do imediato do display LCD
+  parameter SWITCH_WIDTH = 14                     // Largura dos switches recebidos pelo módulo
+)
 (
   // Entradas do sistema
   input wire        clock_50,                     // Clock de 50 MHz
-  input wire [17:0] switches,                     // Switches (não utilizados atualmente)
+  input wire [SWITCH_WIDTH-1:0] switches,        // Switches (não utilizados atualmente)
   
   // Saídas para o display LCD
   output wire       lcd_on,                       // Liga o display LCD
@@ -13,11 +19,11 @@ module tela_lcd
   inout  wire [7:0] lcd_data,                     // Barramento de dados bidirecional
   
   // Entradas de dados
-  input wire [15:0] immediate,                    // Imediato da instrução display_lcd
+  input wire [IMMEDIATE_WIDTH-1:0] immediate,    // Imediato da instrução display_lcd
   input wire        clock,                        // Clock do processador
   input wire        enable_display,               // Sinal de habilitação do display
-  input wire [31:0] data_1,                       // Primeiro valor a ser exibido
-  input wire [31:0] data_2                        // Segundo valor a ser exibido
+  input wire [DATA_WIDTH-1:0] data_1,            // Primeiro valor a ser exibido
+  input wire [DATA_WIDTH-1:0] data_2              // Segundo valor a ser exibido
 );
 
   // Dígitos BCD para data_1
@@ -33,9 +39,9 @@ module tela_lcd
   wire [3:0] ones_bin_2;                          // Unidades
   
   // Registradores internos
-  reg [15:0] choice;                              // Armazena o imediato (tipo de exibição)
-  reg [31:0] reg_data_1;                          // Registra data_1
-  reg [31:0] reg_data_2;                          // Registra data_2
+  reg [IMMEDIATE_WIDTH-1:0] choice;              // Armazena o imediato (tipo de exibição)
+  reg [DATA_WIDTH-1:0] reg_data_1;                // Registra data_1
+  reg [DATA_WIDTH-1:0] reg_data_2;                // Registra data_2
   reg        display_first;                       // Flag indicando primeira ativação
   
   // Inicialização
@@ -53,22 +59,29 @@ module tela_lcd
     end
   end
   
-  // Conversores binário para BCD (13 bits LSB de cada valor)
-  bcd bcd_1 (
-    .binary(reg_data_1[12:0]),
+  // Conversores binário para BCD (LSBs configuráveis de cada valor)
+  bcd #(
+    .BINARY_WIDTH(BCD_INPUT_WIDTH)
+  ) bcd_1 (
+    .binary(reg_data_1[BCD_INPUT_WIDTH-1:0]),
     .thousands(thousands_bin_1),
     .hundreds(hundreds_bin_1),
     .tens(tens_bin_1),
     .ones(ones_bin_1)
   );
   
-  bcd bcd_2 (
-    .binary(reg_data_2[12:0]),
+  bcd #(
+    .BINARY_WIDTH(BCD_INPUT_WIDTH)
+  ) bcd_2 (
+    .binary(reg_data_2[BCD_INPUT_WIDTH-1:0]),
     .thousands(thousands_bin_2),
     .hundreds(hundreds_bin_2),
     .tens(tens_bin_2),
     .ones(ones_bin_2)
   );
+  
+  wire GPIO_0;
+  wire GPIO_1;
 
   // Instância do controlador LCD
   // Se display_first=0, envia 0xFFFF (desligado)
