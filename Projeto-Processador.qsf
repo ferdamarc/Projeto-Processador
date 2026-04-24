@@ -55,23 +55,23 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 
 # Inputs
 set_location_assignment PIN_Y2 -to entrada_clock
-set_location_assignment PIN_AB22 -to botao
-set_location_assignment PIN_AB21 -to botao_continue
-set_location_assignment PIN_Y16 -to sw[0]
-set_location_assignment PIN_AD21 -to sw[1]
-set_location_assignment PIN_AE16 -to sw[2]
-set_location_assignment PIN_AD15 -to sw[3]
-set_location_assignment PIN_AE15 -to sw[4]
-set_location_assignment PIN_AC19 -to sw[5]
-set_location_assignment PIN_AF16 -to sw[6]
-set_location_assignment PIN_AD19 -to sw[7]
-set_location_assignment PIN_AF15 -to sw[8]
-set_location_assignment PIN_AF24 -to sw[9]
-set_location_assignment PIN_AE21 -to sw[10]
-set_location_assignment PIN_AF25 -to sw[11]
-set_location_assignment PIN_AC22 -to sw[12]
-set_location_assignment PIN_AE22 -to sw[13]
-set_location_assignment PIN_AG25 -to loop_enable
+set_location_assignment PIN_M23 -to botao
+set_location_assignment PIN_N21 -to botao_continue
+set_location_assignment PIN_AB28 -to sw[0]
+set_location_assignment PIN_AC28 -to sw[1]
+set_location_assignment PIN_AC27 -to sw[2]
+set_location_assignment PIN_AD27 -to sw[3]
+set_location_assignment PIN_AB27 -to sw[4]
+set_location_assignment PIN_AC26 -to sw[5]
+set_location_assignment PIN_AD26 -to sw[6]
+set_location_assignment PIN_AB26 -to sw[7]
+set_location_assignment PIN_AC25 -to sw[8]
+set_location_assignment PIN_AB25 -to sw[9]
+set_location_assignment PIN_AC24 -to sw[10]
+set_location_assignment PIN_AB24 -to sw[11]
+set_location_assignment PIN_AB23 -to sw[12]
+set_location_assignment PIN_AA24 -to sw[13]
+set_location_assignment PIN_Y23 -to loop_enable
 # Keyboard
 set_location_assignment PIN_D26 -to ps2_clk_in
 set_location_assignment PIN_C24 -to ps2_data_in
