@@ -27,6 +27,7 @@ module modulo_input
   reg [5:0]  debouncer;                           // Contador de debounce para botao
   reg [5:0]  debouncer_continue;                  // Contador de debounce para botao_continue
 reg        ready_clean;                         // Sinal para limpar o buffer do teclado
+  reg [7:0]  ps2_data_out_reg;                       // Saída do último byte válido do teclado PS/2
 
   // Buffer do teclado PS/2
   reg [7:0] ps2_keyboard_buffer;
@@ -117,11 +118,11 @@ ready_clean         = 1'b0;
 
   always @(negedge reg_clock) begin
     if (in == 2'd2) begin
-      ps2_data_out <= ps2_keyboard_buffer;
+      ps2_data_out_reg <= ps2_keyboard_buffer;
       ready_clean <= 1'b1;
     end
     else begin
-      ps2_data_out <= 8'd0;
+      ps2_data_out_reg <= 8'd0;
       ready_clean <= 1'b0;
     end
   end
@@ -141,5 +142,5 @@ if (ready_clean) begin
   assign saida_botao_continue = debouncer_continue[5];
   assign saida_clock          = reg_clock;
   assign resultado_entrada    = resultado;
-
+  assign ps2_data_out         = ps2_data_out_reg;
 endmodule
