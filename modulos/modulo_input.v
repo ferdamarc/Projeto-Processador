@@ -24,8 +24,8 @@ module modulo_input
   reg [25:0] out;                                 // Contador para divisão de clock
   reg [13:0] resultado;                           // Armazena valor dos switches
   reg        reg_clock;                           // Clock gerado
-  reg [3:0]  debouncer;                           // Contador de debounce para botao
-  reg [3:0]  debouncer_continue;                  // Contador de debounce para botao_continue
+  reg [5:0]  debouncer;                           // Contador de debounce para botao
+  reg [5:0]  debouncer_continue;                  // Contador de debounce para botao_continue
 
   // Buffer do teclado PS/2
   reg [7:0] ps2_keyboard_buffer;
@@ -37,8 +37,8 @@ module modulo_input
     out                 = 26'd0;
     resultado           = 14'd0;
     reg_clock           = 1'b0;
-    debouncer           = 4'd0;
-    debouncer_continue  = 4'd0;
+    debouncer           = 6'd0;
+    debouncer_continue  = 6'd0;
     ps2_keyboard_buffer = 8'd0;
   end
 
@@ -53,18 +53,18 @@ module modulo_input
 
   // Debounce para o botao (confirmar entrada de dados na instrução IN)
   always @(posedge clock) begin
-    if ((botao == 1'b0) && (debouncer[3] != 1'b1))
+    if ((botao == 1'b0) && (debouncer[5] != 1'b1))
       debouncer <= debouncer + 1'b1;
     else if (botao == 1'b1)
-      debouncer <= 4'd0;
+      debouncer <= 6'd0;
   end
 
   // Debounce para o botao_continue (avançar clock manualmente em PAUSE=2)
   always @(posedge clock) begin
-    if ((botao_continue == 1'b0) && (debouncer_continue[3] != 1'b1))
+    if ((botao_continue == 1'b0) && (debouncer_continue[5] != 1'b1))
       debouncer_continue <= debouncer_continue + 1'b1;
     else if (botao_continue == 1'b1)
-      debouncer_continue <= 4'd0;
+      debouncer_continue <= 6'd0;
   end
 
   // Geração do clock do processador com 3 modos
@@ -81,8 +81,9 @@ module modulo_input
     end
     else if (pause == 2'd0) begin
       // Modo 0: Manual para instrução IN
-      if (debouncer[3] == 1'b1) begin
-        if (out == 26'd500_000) begin
+      if (debouncer[5] == 1'b1) begin
+// Clock de 1Hz (25 milhões de ciclos de 50 MHz)
+        if (out == 26'd25_000_000) begin
           out       <= 26'd0;
           reg_clock <= ~reg_clock;
         end else begin
@@ -92,8 +93,9 @@ module modulo_input
     end
     else if (pause == 2'd2) begin
       // Modo 2: Manual para instrução OUT (ou outras pausas)
-      if (debouncer_continue[3] == 1'b1) begin
-        if (out == 26'd500_000) begin
+      if (debouncer_continue[5] == 1'b1) begin
+// Clock de 1Hz (25 milhões de ciclos de 50 MHz)
+        if (out == 26'd25_000_000) begin
           out       <= 26'd0;
           reg_clock <= ~reg_clock;
         end else begin
@@ -124,8 +126,8 @@ module modulo_input
   assign ps2_data_out = (in == 2'd2) ? ps2_keyboard_buffer : 8'd0;
 
   // Atribuições de saída
-  assign saida_botao          = debouncer[3];
-  assign saida_botao_continue = debouncer_continue[3];
+  assign saida_botao          = debouncer[5];
+  assign saida_botao_continue = debouncer_continue[5];
   assign saida_clock          = reg_clock;
   assign resultado_entrada    = resultado;
 
