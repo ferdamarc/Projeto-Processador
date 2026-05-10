@@ -26,6 +26,7 @@ module modulo_input
   reg        reg_clock;                           // Clock gerado
   reg [5:0]  debouncer;                           // Contador de debounce para botao
   reg [5:0]  debouncer_continue;                  // Contador de debounce para botao_continue
+reg        ready_clean;                         // Sinal para limpar o buffer do teclado
 
   // Buffer do teclado PS/2
   reg [7:0] ps2_keyboard_buffer;
@@ -40,6 +41,7 @@ module modulo_input
     debouncer           = 6'd0;
     debouncer_continue  = 6'd0;
     ps2_keyboard_buffer = 8'd0;
+ready_clean         = 1'b0;
   end
 
   // Receptor PS/2
@@ -113,17 +115,26 @@ module modulo_input
       resultado = 14'd0;
   end
 
+  always @(negedge reg_clock) begin
+    if (in == 2'd2) begin
+      ps2_data_out <= ps2_keyboard_buffer;
+      ready_clean <= 1'b1;
+    end
+    else begin
+      ps2_data_out <= 8'd0;
+      ready_clean <= 1'b0;
+    end
+  end
+
   // Armazena a última tecla válida recebida e limpa após consumo pela CPU
   always @(posedge clock) begin
     if (data_valid) begin
       ps2_keyboard_buffer <= ps2_keyboard_data;
-    end else if (in == 2'd2) begin
+    end 
+if (ready_clean) begin
       ps2_keyboard_buffer <= 8'd0;
     end
   end
-
-  // Quando a instrução de teclado está ativa, expõe o byte buffered para a CPU
-  assign ps2_data_out = (in == 2'd2) ? ps2_keyboard_buffer : 8'd0;
 
   // Atribuições de saída
   assign saida_botao          = debouncer[5];
