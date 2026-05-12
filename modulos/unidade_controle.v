@@ -217,13 +217,15 @@ module unidade_controle (
         reg_get_interruption <= 1'b1;
       end
 
-      6'b011000: begin  // get_input_keyboard
+      6'b010111: begin  // get_input_keyboard
         reg_reg_write <= 1'b1;
         reg_reg_dst <= 1'b1;
         reg_in <= 2'd2;                           // Seleciona entrada do teclado
       end
 
-      6'b010111: begin  // frame_buffer_write
+      6'b001111: begin  // pixel_drawing
+        reg_reg_dst <= 1'b1;
+        reg_alu_src <= 1'b1;
         reg_frame_buffer_write <= 1'b1;           // Habilita escrita no framebuffer
       end
     endcase
