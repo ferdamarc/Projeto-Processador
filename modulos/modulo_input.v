@@ -26,7 +26,7 @@ module modulo_input
   reg        reg_clock;                           // Clock gerado
   reg [5:0]  debouncer;                           // Contador de debounce para botao
   reg [5:0]  debouncer_continue;                  // Contador de debounce para botao_continue
-reg        ready_clean;                         // Sinal para limpar o buffer do teclado
+  reg        ready_clean;                         // Sinal para limpar o buffer do teclado
   reg [7:0]  ps2_data_out_reg;                       // Saída do último byte válido do teclado PS/2
 
   // Buffer do teclado PS/2
@@ -42,7 +42,7 @@ reg        ready_clean;                         // Sinal para limpar o buffer do
     debouncer           = 6'd0;
     debouncer_continue  = 6'd0;
     ps2_keyboard_buffer = 8'd0;
-ready_clean         = 1'b0;
+    ready_clean         = 1'b0;
   end
 
   // Receptor PS/2
@@ -85,7 +85,7 @@ ready_clean         = 1'b0;
     else if (pause == 2'd0) begin
       // Modo 0: Manual para instrução IN
       if (debouncer[5] == 1'b1) begin
-// Clock de 1Hz (25 milhões de ciclos de 50 MHz)
+        // Clock de 1Hz (25 milhões de ciclos de 50 MHz)
         if (out == 26'd25_000_000) begin
           out       <= 26'd0;
           reg_clock <= ~reg_clock;
@@ -97,7 +97,7 @@ ready_clean         = 1'b0;
     else if (pause == 2'd2) begin
       // Modo 2: Manual para instrução OUT (ou outras pausas)
       if (debouncer_continue[5] == 1'b1) begin
-// Clock de 1Hz (25 milhões de ciclos de 50 MHz)
+        // Clock de 1Hz (25 milhões de ciclos de 50 MHz)
         if (out == 26'd25_000_000) begin
           out       <= 26'd0;
           reg_clock <= ~reg_clock;
@@ -132,7 +132,7 @@ ready_clean         = 1'b0;
     if (data_valid) begin
       ps2_keyboard_buffer <= ps2_keyboard_data;
     end 
-if (ready_clean) begin
+    if (ready_clean) begin
       ps2_keyboard_buffer <= 8'd0;
     end
   end
