@@ -83,6 +83,7 @@ set_location_assignment PIN_G13 -to hsync
 set_location_assignment PIN_C13 -to vsync
 
 # Outputs
+set_location_assignment PIN_E21 -to LEDG[0]
 set_location_assignment PIN_G19 -to led[0]
 set_location_assignment PIN_F19 -to led[1]
 set_location_assignment PIN_E19 -to led[2]

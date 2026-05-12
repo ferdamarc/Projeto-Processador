@@ -12,7 +12,10 @@ module unidade_processamento
     input           botao,                      // Botão de entrada para outras funções
     input           botao_continue,             // Novo botão dedicado ao avanço manual (continue)
     input [13:0]    sw,                         // Switches para entrada de dados
-	input           loop_enable,                 // Switch que permite a execução em loop do programa; não reinicia o sistema
+	input           loop_enable,                // Switch que permite a execução em loop do programa; não reinicia o sistema
+
+    // Saída de debug para VGA
+    output [0:0]    LEDG,                        // LEDG[0]: trava em 1 após a primeira escrita no framebuffer
 
     // Entradas para teclado PS/2
     input           ps2_clk_in,                 // Clock do teclado PS/2
@@ -102,6 +105,11 @@ module unidade_processamento
   wire [7:0]  ps2_data_out;
   wire saida_botao;
 
+  // Sinal de debug do VGA
+  // Este registrador funciona como um latch: quando a CPU executar pelo menos
+  // uma instrução que habilite frame_buffer_write, LEDG[0] fica aceso.
+  reg vga_write_seen;
+
   // Sinais dos Multiplexadores
   wire [DATA_WIDTH-1:0] escolhido_multiplexador_mem_to_reg;
   wire [DATA_WIDTH-1:0] escolhido_multiplexador_alu_src;
@@ -128,6 +136,17 @@ module unidade_processamento
     qual_interrupcao = {DATA_WIDTH{1'b0}};
     pc_interrup = {INSTR_ADDR_WIDTH{1'b0}};
     pc_retorno_so = {INSTR_ADDR_WIDTH{1'b0}};
+    vga_write_seen = 1'b0;
+  end
+
+  // LEDG[0] acende de forma permanente após a primeira tentativa de escrita
+  // no framebuffer. Assim, não dependemos de enxergar pulsos rápidos no LED.
+  assign LEDG[0] = vga_write_seen;
+
+  always @(posedge clock) begin
+    if (frame_buffer_write) begin
+      vga_write_seen <= 1'b1;
+    end
   end
   
   // Extensor de Imediato: estende imediato de 16 para 32 bits
