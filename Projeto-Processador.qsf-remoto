@@ -73,8 +73,8 @@ set_location_assignment PIN_AC22 -to sw[12]
 set_location_assignment PIN_AE22 -to sw[13]
 set_location_assignment PIN_AG25 -to loop_enable
 # Keyboard
-set_location_assignment PIN_D26 -to ps2_clk_in
-set_location_assignment PIN_C24 -to ps2_data_in
+set_location_assignment PIN_G6 -to ps2_clk_in
+set_location_assignment PIN_H5 -to ps2_data_in
 # VGA
 set_location_assignment PIN_H10 -to disp_rgb[2]
 set_location_assignment PIN_C9 -to disp_rgb[1]
