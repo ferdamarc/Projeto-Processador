@@ -14,12 +14,9 @@ module framebuffer
 
     localparam RAM_DEPTH = (1 << ADDR_WIDTH);
     reg [DATA_WIDTH-1:0] ram[0:RAM_DEPTH-1];
-    integer i;
 
+    // Inicializacao da memoria
     initial begin
-        for (i = 0; i < RAM_DEPTH; i = i + 1) begin
-            ram[i] = {DATA_WIDTH{1'b0}};
-        end
         q = {DATA_WIDTH{1'b0}};
     end
 
