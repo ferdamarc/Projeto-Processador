@@ -11,3 +11,6 @@ others/DE2_115_User_manual.pdf
 output_files/*
 # Except for the final output file
 !output_files/Projeto-Processador.sof
+
+# ModelSim Simulation
+simulation/modelsim/
