@@ -84,7 +84,7 @@ module scancode_decoder (
       end
 
       default: begin
-        ascii_code = scan_code;  // For debugging: output raw scan code
+        ascii_code = 8'h00;  // Tecla não mapeada → 0x00 (tratada como "nenhuma tecla")
       end
     endcase
   end
