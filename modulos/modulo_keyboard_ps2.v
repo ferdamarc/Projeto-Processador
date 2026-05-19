@@ -42,6 +42,7 @@ module PS2Key (
 
   reg [7:0] last_make_code;
   reg       break_code_expected;
+  reg       extended_code_expected;  // Recebeu prefixo 0xE0; próximo byte é de tecla estendida
 
   // Verificação de paridade ímpar do PS/2: o número de '1's nos 8 bits de dados
   // mais o bit de paridade deve ser ímpar. O frame é válido quando o bit de
@@ -59,6 +60,7 @@ module PS2Key (
     ps2_clk_prev        = 0;
     last_make_code      = 0;
     break_code_expected = 0;
+    extended_code_expected = 0;
     decode_pending      = 0;
   end
 
@@ -104,16 +106,23 @@ module PS2Key (
 
             raw_scancode <= data_buffer;
 
-            if (break_code_expected) begin
-
-              if (data_buffer == last_make_code) begin
+            if (data_buffer == 8'hE0) begin
+              // Prefixo de tecla estendida; segura para o próximo byte
+              extended_code_expected <= 1'b1;
+            end else if (break_code_expected) begin
+              // Break code: se for de uma tecla mapeada (não estendida) e bater
+              // com last_make_code, libera a tecla; senão apenas limpa flags.
+              if (!extended_code_expected && data_buffer == last_make_code) begin
                 last_make_code <= 8'h00;
               end
-
-              break_code_expected <= 1'b0;
+              break_code_expected    <= 1'b0;
+              extended_code_expected <= 1'b0;
             end else if (data_buffer == 8'hF0) begin
 
               break_code_expected <= 1'b1;
+            end else if (extended_code_expected) begin
+              // Make code de tecla estendida — não suportado; descarta silenciosamente
+              extended_code_expected <= 1'b0;
             end else if (data_buffer != last_make_code) begin
 
               last_make_code <= data_buffer;
