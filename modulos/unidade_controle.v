@@ -158,7 +158,7 @@ module unidade_controle (
 
       6'b011110: begin  // output
         reg_out <= 1'b1;
-        reg_enable <= 2'd2;                       // Espera button 0 ser pressionado
+        reg_enable <= 2'd1;                       // Continua execução automática (não pausa aguardando botão)
       end
 
       6'b000010: begin  // j
