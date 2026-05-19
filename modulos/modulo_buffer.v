@@ -8,7 +8,8 @@ module framebuffer
     input  wire [(ADDR_WIDTH-1):0] read_addr,
     input  wire [(ADDR_WIDTH-1):0] write_addr,
     input  wire                    we,
-    input  wire                    clk,
+    input  wire                    write_clk,
+    input  wire                    read_clk,
     output reg  [(DATA_WIDTH-1):0] q
 );
 
@@ -20,10 +21,13 @@ module framebuffer
         q = {DATA_WIDTH{1'b0}};
     end
 
-    always @(posedge clk) begin
+    always @(posedge write_clk) begin
         if (we) begin
             ram[write_addr] <= data;
         end
+    end
+
+    always @(posedge read_clk) begin
         q <= ram[read_addr];
     end
 
