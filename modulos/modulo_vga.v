@@ -1,21 +1,27 @@
 module modulo_vga #(
-    parameter PIXEL_SCALING_FACTOR = 16,
-    parameter HSYNC_END  = 10'd96,
+    parameter PIXEL_SCALING_FACTOR = 8,
+    parameter HSYNC_END  = 10'd95,
     parameter HDAT_BEGIN = 10'd144,
     parameter HDAT_END   = 10'd784,
     parameter HPIXEL_END = 10'd799,
     parameter VSYNC_END  = 10'd2,
-    parameter VDAT_BEGIN = 10'd35,
-    parameter VDAT_END   = 10'd515,
+    parameter VDAT_BEGIN = 10'd34,
+    parameter VDAT_END   = 10'd514,
     parameter VLINE_END  = 10'd524
 )(
     input  wire       clock,
+    input  wire       write_clk,
     input  wire       wr_en,
     input  wire [16:0] wr_addr,
     input  wire [2:0] wr_data,
-    output wire [2:0] disp_rgb,
     output wire       hsync,
-    output wire       vsync
+    output wire       vsync,
+    output wire       vga_clk_out,
+    output wire       vga_blank_n,
+    output wire       vga_sync_n,
+    output wire [7:0] vga_r,
+    output wire [7:0] vga_g,
+    output wire [7:0] vga_b
 );
 
     localparam BASE_FB_LOGICAL_WIDTH  = 640;
@@ -34,18 +40,19 @@ module modulo_vga #(
     wire [ACTUAL_FB_ADDR_WIDTH-1:0] rd_addr_internal;
     wire [ACTUAL_FB_ADDR_WIDTH-1:0] wr_addr_internal;
     wire [2:0] fb_data;
+    wire [2:0] disp_rgb;
     wire [9:0] screen_h_coord;
     wire [9:0] screen_v_coord;
     wire [9:0] fb_access_h_idx;
     wire [9:0] fb_access_v_idx;
-
     assign wr_addr_internal = wr_addr[ACTUAL_FB_ADDR_WIDTH-1:0];
 
     framebuffer #(
         .DATA_WIDTH(3),
         .ADDR_WIDTH(ACTUAL_FB_ADDR_WIDTH)
     ) fb (
-        .clk(vga_clk),
+        .write_clk(write_clk),
+        .read_clk(vga_clk),
         .we(wr_en),
         .write_addr(wr_addr_internal),
         .data(wr_data),
@@ -96,5 +103,13 @@ module modulo_vga #(
     assign hsync = ~((hcount >= 10'd0) && (hcount < HSYNC_END));
     assign vsync = ~((vcount >= 10'd0) && (vcount < VSYNC_END));
     assign disp_rgb = dat_act ? fb_data : 3'b000;
+
+    assign vga_clk_out = vga_clk;
+    assign vga_sync_n  = 1'b0;
+    assign vga_blank_n = ~((hcount < HDAT_BEGIN) | (hcount >= HDAT_END) |
+                            (vcount < VDAT_BEGIN) | (vcount >= VDAT_END));
+    assign vga_r = {8{disp_rgb[2]}};
+    assign vga_g = {8{disp_rgb[1]}};
+    assign vga_b = {8{disp_rgb[0]}};
 
 endmodule
