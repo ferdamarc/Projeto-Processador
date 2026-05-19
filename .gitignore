@@ -14,3 +14,8 @@ output_files/*
 
 # ModelSim Simulation
 simulation/modelsim/
+
+# Documentation and reports
+reports/
+docs/
+
