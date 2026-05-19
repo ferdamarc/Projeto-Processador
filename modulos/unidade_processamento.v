@@ -4,7 +4,7 @@ module unidade_processamento
     parameter INSTR_ADDR_WIDTH = 13,            // Largura do endereço da ROM/MI
     parameter DATA_ADDR_WIDTH = 13,             // Largura do endereço da RAM/MD
     parameter PROGRS_INIT = 13'd1000,           // Endereço de início dos programas
-    parameter VGA_PIXEL_SCALING_FACTOR = 16     // Fator de escala usado para diminuir o buffer
+    parameter VGA_PIXEL_SCALING_FACTOR = 8      // Fator de escala usado para diminuir o buffer
 )
 ( 
     // Entradas Principais
@@ -42,9 +42,16 @@ module unidade_processamento
     inout  [7:0]    LCD_DATA,
 
     // Saídas para VGA
-    output [2:0]    disp_rgb,                   // Protocolo VGA com até 8 cores
     output          hsync,
-    output          vsync
+    output          vsync,
+
+    // Interface ADV7123 DAC
+    output          vga_clk_out,
+    output          vga_blank_n,
+    output          vga_sync_n,
+    output [7:0]    vga_r,
+    output [7:0]    vga_g,
+    output [7:0]    vga_b
 );
 
   // DECLARAÇÃO DE SINAIS INTERNOS
@@ -516,12 +523,18 @@ module unidade_processamento
       .PIXEL_SCALING_FACTOR(VGA_PIXEL_SCALING_FACTOR)
   ) mvga (
       .clock(entrada_clock),
+      .write_clk(clock),
       .wr_en(frame_buffer_write),
       .wr_addr(saida_ula[16:0]),
       .wr_data(br_dado2[2:0]),
-      .disp_rgb(disp_rgb),
       .hsync(hsync),
-      .vsync(vsync)
+      .vsync(vsync),
+      .vga_clk_out(vga_clk_out),
+      .vga_blank_n(vga_blank_n),
+      .vga_sync_n(vga_sync_n),
+      .vga_r(vga_r),
+      .vga_g(vga_g),
+      .vga_b(vga_b)
   );
 
 endmodule
