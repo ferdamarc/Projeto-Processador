@@ -25,8 +25,8 @@ module modulo_output_v2
   output [6:0]  display_4,                        // Display 4 (milhares do valor)
   output [6:0]  display_pc_1,                     // Display 1 do PC (unidades)
   output [6:0]  display_pc_2,                     // Display 2 do PC (dezenas)
-  output [6:0]  display_fp_1,                     // Display 1 do FP (unidades)
-  output [6:0]  display_fp_2,                     // Display 2 do FP (dezenas)
+  output [6:0]  display_fp_1,                     // Display 3 do PC (centenas) — HEX4
+  output [6:0]  display_fp_2,                     // Display 4 do PC (milhares) — HEX5
 
   // Saídas PS2
   output [7:0] seg,
@@ -84,12 +84,8 @@ module modulo_output_v2
     end
   end
 
-  // Atualização dos displays de valor e FP (sincronizado com clock_cpu)
+  // Atualização dos displays de valor (sincronizado com clock_cpu)
   always @(posedge clock_cpu) begin
-    // Atualiza constantemente os dígitos do FP
-    valor_display_fp_1 <= fp % 10;
-    valor_display_fp_2 <= (fp % 100) / 10;
-
     // Captura e armazena valor quando enable_out e switch_enable ativos
     if (enable_out && switch_enable) begin
       valor_registrado <= valor_saida;
@@ -107,20 +103,23 @@ module modulo_output_v2
     digit_values[3] <= valor_display_4;
   end
 
-  // Atualização dos displays de PC e LEDs (usando clock de 50MHz)
-  always @(posedge clk_240hz_counter) begin
-    // Mostra os últimos dois dígitos do PC
-    valor_display_pc_1 <= pc % 10;
-    valor_display_pc_2 <= (pc % 100) / 10;
+  always @(posedge clk) begin
+    if (clk_240hz_counter == 20'd0) begin
+      // Mostra os quatro últimos dígitos decimais do PC em HEX7-4 (big-endian: leitura esquerda→direita)
+      valor_display_pc_1 <= (pc % 10000) / 1000;       // HEX7: milhares  (dígito mais significativo)
+      valor_display_pc_2 <= (pc % 1000)  / 100;        // HEX6: centenas
+      valor_display_fp_2 <= (pc % 100)   / 10;         // HEX5: dezenas
+      valor_display_fp_1 <= pc % 10;                   // HEX4: unidades  (dígito menos significativo)
 
-    // LED 13 indica se os switches estão habilitados
-    reg_led_13 <= switch_enable;
+      // LED 13 indica se os switches estão habilitados
+      reg_led_13 <= switch_enable;
 
-    // LEDs 0-12 mostram os 13 bits menos significativos quando enable_in ativo
-    if (enable_in) begin
-      reg_leds <= valor_saida[12:0];
-    end else begin
-      reg_leds <= 13'd0;
+      // LEDs 0-12 mostram os 13 bits menos significativos quando enable_in ativo
+      if (enable_in) begin
+        reg_leds <= valor_saida[12:0];
+      end else begin
+        reg_leds <= 13'd0;
+      end
     end
   end
 
