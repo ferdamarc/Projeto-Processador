@@ -38,12 +38,15 @@ module PS2Key (
   reg [3:0] bit_count;
   reg [7:0] data_buffer;
   reg       parity_bit;
-  reg       error_flag;
-  reg       decode_pending;  
+  reg       decode_pending;
 
-  
-  reg [7:0] last_make_code;  
-  reg       break_code_expected;  
+  reg [7:0] last_make_code;
+  reg       break_code_expected;
+
+  // Verificação de paridade ímpar do PS/2: o número de '1's nos 8 bits de dados
+  // mais o bit de paridade deve ser ímpar. O frame é válido quando o bit de
+  // paridade recebido coincide com o esperado (~^data_buffer).
+  wire parity_ok = (parity_bit == ~(^data_buffer));
 
   initial begin
     state               = IDLE; // Initial state of FSM
@@ -51,12 +54,11 @@ module PS2Key (
     data_buffer         = 0;
     parity_bit          = 0;
     raw_scancode        = 0;
-    data                = 0;  
-    data_valid          = 0;  
-    error_flag          = 0;
-    ps2_clk_prev        = 0;  
-    last_make_code      = 0;  
-    break_code_expected = 0;  
+    data                = 0;
+    data_valid          = 0;
+    ps2_clk_prev        = 0;
+    last_make_code      = 0;
+    break_code_expected = 0;
     decode_pending      = 0;
   end
 
@@ -77,7 +79,6 @@ module PS2Key (
             state       <= RECEIVING;
             bit_count   <= 0;
             data_buffer <= 0;
-            error_flag  <= 0;
           end
         end
 
@@ -90,42 +91,39 @@ module PS2Key (
             parity_bit <= ps2_dat_synced;
             bit_count  <= bit_count + 1;
             state      <= CHECK_STOP;
-          end else begin  
-            state      <= IDLE;
-            error_flag <= 1;
+          end else begin
+            state <= IDLE;
           end
         end
 
         // State for checking the stop bit and validating the received data
         CHECK_STOP: begin
-          if (ps2_dat_synced == 1) begin  
-            
-            raw_scancode <= data_buffer;  
+          // Processa o frame apenas se o stop bit estiver presente e a paridade
+          // ímpar conferir; frames corrompidos são descartados silenciosamente.
+          if ((ps2_dat_synced == 1) && parity_ok) begin
+
+            raw_scancode <= data_buffer;
 
             if (break_code_expected) begin
-              
+
               if (data_buffer == last_make_code) begin
-                last_make_code <= 8'h00;  
+                last_make_code <= 8'h00;
               end
 
               break_code_expected <= 1'b0;
             end else if (data_buffer == 8'hF0) begin
-              
+
               break_code_expected <= 1'b1;
             end else if (data_buffer != last_make_code) begin
-              
-              last_make_code <= data_buffer;  
-              decode_pending <= 1;  
-              
 
-              
+              last_make_code <= data_buffer;
+              decode_pending <= 1;
+
             end
-          end else begin
-            error_flag <= 1;
           end
 
           // Return to IDLE state after processing the received data
-          state     <= IDLE;  
+          state     <= IDLE;
           bit_count <= 0;
         end
 
@@ -134,9 +132,9 @@ module PS2Key (
           state <= IDLE;
         end
       endcase
-    end  
+    end
 
-  end  
+  end
 
   // Instantiate the scancode decoder module
   scancode_decoder i_scancode_decoder (
