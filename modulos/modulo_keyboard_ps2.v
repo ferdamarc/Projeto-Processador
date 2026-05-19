@@ -33,7 +33,6 @@ module PS2Key (
   parameter IDLE = 0;
   parameter RECEIVING = 1;
   parameter CHECK_STOP = 2;
-  parameter DECODE_WAIT = 3;
 
   reg [1:0] state;
   reg [3:0] bit_count;
