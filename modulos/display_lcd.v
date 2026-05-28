@@ -1106,6 +1106,114 @@ module LCD_display_string(index,out,choice,hex3_Num2,hex2_Num2,hex1_Num2,hex0_Nu
 					default: out <= 8'h20;
 				endcase
 
+				/* NPM — sub-menu Simples/Complexo */
+				16'd30: case (index)
+					// Linha 1: "Modo: 1-S 2-C"
+					5'h00: out <= 8'h4D; // M
+					5'h01: out <= 8'h6F; // o
+					5'h02: out <= 8'h64; // d
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h3A; // :
+					5'h05: out <= 8'h20; // Espaço
+					5'h06: out <= 8'h31; // 1
+					5'h07: out <= 8'h2D; // -
+					5'h08: out <= 8'h53; // S
+					5'h09: out <= 8'h20; // Espaço
+					5'h0A: out <= 8'h32; // 2
+					5'h0B: out <= 8'h2D; // -
+					5'h0C: out <= 8'h43; // C
+					// Linha 2: "1=Simples 2=Comp"
+					5'h10: out <= 8'h31; // 1
+					5'h11: out <= 8'h3D; // =
+					5'h12: out <= 8'h53; // S
+					5'h13: out <= 8'h69; // i
+					5'h14: out <= 8'h6D; // m
+					5'h15: out <= 8'h70; // p
+					5'h16: out <= 8'h6C; // l
+					5'h17: out <= 8'h65; // e
+					5'h18: out <= 8'h73; // s
+					5'h19: out <= 8'h20; // Espaço
+					5'h1A: out <= 8'h32; // 2
+					5'h1B: out <= 8'h3D; // =
+					5'h1C: out <= 8'h43; // C
+					5'h1D: out <= 8'h6F; // o
+					5'h1E: out <= 8'h6D; // m
+					5'h1F: out <= 8'h70; // p
+					default: out <= 8'h20;
+				endcase
+
+				/* Modo S escolhido */
+				16'd31: case (index)
+					// Linha 1: "Modo S"
+					5'h00: out <= 8'h4D; // M
+					5'h01: out <= 8'h6F; // o
+					5'h02: out <= 8'h64; // d
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h20; // Espaço
+					5'h05: out <= 8'h53; // S
+					// Linha 2: "escolhido"
+					5'h10: out <= 8'h65; // e
+					5'h11: out <= 8'h73; // s
+					5'h12: out <= 8'h63; // c
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h6C; // l
+					5'h15: out <= 8'h68; // h
+					5'h16: out <= 8'h69; // i
+					5'h17: out <= 8'h64; // d
+					5'h18: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				/* Modo C escolhido */
+				16'd32: case (index)
+					// Linha 1: "Modo C"
+					5'h00: out <= 8'h4D; // M
+					5'h01: out <= 8'h6F; // o
+					5'h02: out <= 8'h64; // d
+					5'h03: out <= 8'h6F; // o
+					5'h04: out <= 8'h20; // Espaço
+					5'h05: out <= 8'h43; // C
+					// Linha 2: "escolhido"
+					5'h10: out <= 8'h65; // e
+					5'h11: out <= 8'h73; // s
+					5'h12: out <= 8'h63; // c
+					5'h13: out <= 8'h6F; // o
+					5'h14: out <= 8'h6C; // l
+					5'h15: out <= 8'h68; // h
+					5'h16: out <= 8'h69; // i
+					5'h17: out <= 8'h64; // d
+					5'h18: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
+				/* Reiniciar a partida? (perguntada pelo tic_tac_toe ao fim de cada jogo) */
+				16'd33: case (index)
+					// Linha 1: "Reiniciar?"
+					5'h00: out <= 8'h52; // R
+					5'h01: out <= 8'h65; // e
+					5'h02: out <= 8'h69; // i
+					5'h03: out <= 8'h6E; // n
+					5'h04: out <= 8'h69; // i
+					5'h05: out <= 8'h63; // c
+					5'h06: out <= 8'h69; // i
+					5'h07: out <= 8'h61; // a
+					5'h08: out <= 8'h72; // r
+					5'h09: out <= 8'h3F; // ?
+					// Linha 2: "1=Sim 2=Nao"
+					5'h10: out <= 8'h31; // 1
+					5'h11: out <= 8'h3D; // =
+					5'h12: out <= 8'h53; // S
+					5'h13: out <= 8'h69; // i
+					5'h14: out <= 8'h6D; // m
+					5'h15: out <= 8'h20; // Espaço
+					5'h16: out <= 8'h32; // 2
+					5'h17: out <= 8'h3D; // =
+					5'h18: out <= 8'h4E; // N
+					5'h19: out <= 8'h61; // a
+					5'h1A: out <= 8'h6F; // o
+					default: out <= 8'h20;
+				endcase
+
 				// Se um imediato desconhecido for passado, o display ficará em branco.
 				default: out <= 8'h20;
 
@@ -1113,231 +1221,3 @@ module LCD_display_string(index,out,choice,hex3_Num2,hex2_Num2,hex1_Num2,hex0_Nu
 		end
 	end
 endmodule
-
-// module LCD_display_string(index,out,choice,hex3_Num2,hex2_Num2,hex1_Num2,hex0_Num2,hex3_Num1,hex2_Num1,hex1_Num1,hex0_Num1);
-// input [4:0] index;
-// input [3:0] hex3_Num2,hex2_Num2,hex1_Num2,hex0_Num2,hex3_Num1,hex2_Num1,hex1_Num1,hex0_Num1;
-// input [15:0] choice;
-// output reg [7:0] out;
-// // ASCII hex values for LCD Display
-// // Enter Live Hex Data Values from hardware here
-// // LCD DISPLAYS THE FOLLOWING:
-// //----------------------------
-// //| Count=XX                  |
-// //| DE2                       |
-// //----------------------------
-// // Line 1
-//    always 
-	
-// 	case (choice) 
-	
-// 	16'd0: 
-// 	begin
-// 		// Escreva aqui: "Sistema esta\n executando..."
-// 		case (index)
-// 			5'h00: out <= 8'h53;//S
-// 			5'h01: out <= 8'h69;//i
-// 			5'h02: out <= 8'h73;//s
-// 			5'h03: out <= 8'h74;//t
-// 			5'h04: out <= 8'h65;//e
-// 			5'h05: out <= 8'h6D;//m
-// 			5'h06: out <= 8'h61;//a
-// 			5'h07: out <= 8'h20;//Espaco
-// 			5'h08: out <= 8'h65;//e
-// 			5'h09: out <= 8'h73;//s
-// 			5'h0A: out <= 8'h74;//t
-// 			5'h0B: out <= 8'h61;//a
-// 			5'h0C: out <= 8'h20;//Espaco
-// 			5'h0D: out <= 8'h20;//Espaco
-// 			5'h0E: out <= 8'h20;//Espaco
-// 		// Line 2
-// 			5'h10: out <= 8'h65;//e
-// 			5'h11: out <= 8'h78;//x
-// 			5'h12: out <= 8'h65;//e
-// 			5'h13: out <= 8'h63;//c
-// 			5'h14: out <= 8'h75;//u
-// 			5'h15: out <= 8'h74;//t
-// 			5'h16: out <= 8'h61;//a
-// 			5'h17: out <= 8'h6E;//n
-// 			5'h18: out <= 8'h64;//d
-// 			5'h19: out <= 8'h6F;//o
-// 			5'h1A: out <= 8'h2E;//.
-// 			5'h1B: out <= 8'h2E;//.
-// 			5'h1C: out <= 8'h2E;//.
-// 			default: out <= 8'h20;
-			
-// 		endcase
-// 	end
-// 	16'd1:
-// 	begin
-// 		case (index)
-// 			// Escreva aqui: "1- Um processo 2- Mais proc's"
-// 			5'h00: out <= 8'h31;//0
-// 			5'h01: out <= 8'h2D;//-
-// 			5'h02: out <= 8'h20;//Espaco
-// 			5'h03: out <= 8'h55;//U
-// 			5'h04: out <= 8'h6D;//m
-// 			5'h05: out <= 8'h20;//Espaco
-// 			5'h06: out <= 8'h70;//p
-// 			5'h07: out <= 8'h72;//r
-// 			5'h08: out <= 8'h6F;//o
-// 			5'h09: out <= 8'h63;//c
-// 			5'h0A: out <= 8'h65;//e
-// 			5'h0B: out <= 8'h73;//s
-// 			5'h0C: out <= 8'h73;//s
-// 			5'h0D: out <= 8'h6F;//o
-// 			5'h0E: out <= 8'h20;//Espaco
-// 		// Line 2
-// 			5'h10: out <= 8'h32;//1
-// 			5'h11: out <= 8'h2D;//-
-// 			5'h12: out <= 8'h20;//Espaco
-// 			5'h13: out <= 8'h4D;//M
-// 			5'h14: out <= 8'h61;//a
-// 			5'h15: out <= 8'h69;//i
-// 			5'h16: out <= 8'h73;//s
-// 			5'h17: out <= 8'h20;//Espaco
-// 			5'h18: out <= 8'h70;//p
-// 			5'h19: out <= 8'h72;//r
-// 			5'h1A: out <= 8'h6F;//o
-// 			5'h1B: out <= 8'h63;//c
-// 			5'h1C: out <= 8'h27;//'
-// 			5'h1D: out <= 8'h73;//s
-
-// 			default: out <= 8'h20;
-// 		 endcase
-// 	end
-// 	16'd2:
-// 	begin
-// 		case (index)
-// 			// Escreva aqui: "Selecione proc. [1 a 10]"
-// 			5'h00: out <= 8'h53;//S
-// 			5'h01: out <= 8'h65;//e
-// 			5'h02: out <= 8'h6C;//l
-// 			5'h03: out <= 8'h65;//e
-// 			5'h04: out <= 8'h63;//c
-// 			5'h05: out <= 8'h69;//i
-// 			5'h06: out <= 8'h6F;//o
-// 			5'h07: out <= 8'h6E;//n
-// 			5'h08: out <= 8'h65;//e
-// 			5'h09: out <= 8'h20;//Espaco
-// 			5'h0A: out <= 8'h70;//p
-// 			5'h0B: out <= 8'h72;//r
-// 			5'h0C: out <= 8'h6F;//o
-// 			5'h0D: out <= 8'h63;//c
-// 			5'h0E: out <= 8'h2E;//.
-// 		// Line 2
-// 			5'h12: out <= 8'h5B;//[
-// 			5'h13: out <= 8'h31;//1
-// 			5'h14: out <= 8'h20;//Espaco
-// 			5'h15: out <= 8'h61;//a
-// 			5'h16: out <= 8'h20;//Espaco
-// 			5'h17: out <= 8'h31;//1
-// 			5'h18: out <= 8'h30;//0
-// 			5'h19: out <= 8'h5D;//]
-// 			5'h1A: out <= 8'h20;//Espaco
-
-// 			default: out <= 8'h20;
-// 		 endcase
-// 	end
-			
-// 	16'd3:
-// 	begin 
-// 		case (index)
-// 			// Escreva aqui: "Interrupcao... Aguarde..."
-// 			5'h00: out <= 8'h49;//I
-// 			5'h01: out <= 8'h6E;//n
-// 			5'h02: out <= 8'h74;//t
-// 			5'h03: out <= 8'h65;//e
-// 			5'h04: out <= 8'h72;//r
-// 			5'h05: out <= 8'h72;//r
-// 			5'h06: out <= 8'h75;//u
-// 			5'h07: out <= 8'h70;//p
-// 			5'h08: out <= 8'h63;//c
-// 			5'h09: out <= 8'h61;//a
-// 			5'h0A: out <= 8'h6F;//o
-// 			5'h0B: out <= 8'h2E;//.
-// 			5'h0C: out <= 8'h2E;//.
-// 			5'h0D: out <= 8'h2E;//.
-// 			5'h0E: out <= 8'h20;//Espaco
-// 		// Line 2
-// 			5'h10: out <= 8'h41;//A
-// 			5'h11: out <= 8'h67;//g
-// 			5'h12: out <= 8'h75;//u
-// 			5'h13: out <= 8'h61;//a
-// 			5'h14: out <= 8'h72;//r
-// 			5'h15: out <= 8'h64;//d
-// 			5'h16: out <= 8'h65;//e
-// 			5'h17: out <= 8'h2E;//.
-// 			5'h18: out <= 8'h2E;//.
-// 			5'h19: out <= 8'h2E;//.
-// 			5'h1A: out <= 8'h20;//Espaco
-// 			default: out <= 8'h20;
-
-// 		 endcase
-// 	end
-
-// 	16'd4:
-// 	begin
-// 		case (index)
-// 		// Escreva aqui: "Processo ## Executando..."
-// 		5'h00: out <= 8'h50;//P
-// 		5'h01: out <= 8'h72;//r
-// 		5'h02: out <= 8'h6F;//o
-// 		5'h03: out <= 8'h63;//c
-// 		5'h04: out <= 8'h65;//e
-// 		5'h05: out <= 8'h73;//s
-// 		5'h06: out <= 8'h73;//s
-// 		5'h07: out <= 8'h6F;//o
-// 		5'h08: out <= 8'h20;//Espaco
-// 		5'h09: out <= 8'h23;//#
-// 		5'h0A: out <= {4'h0,hex1_Num1};
-// 		5'h0B: out <= {4'h0,hex0_Num1};
-// 		// Line 2
-// 		5'h10: out <= 8'h45;//E
-// 		5'h11: out <= 8'h78;//x
-// 		5'h12: out <= 8'h65;//e
-// 		5'h13: out <= 8'h63;//c
-// 		5'h14: out <= 8'h75;//u
-// 		5'h15: out <= 8'h74;//t
-// 		5'h16: out <= 8'h61;//a
-// 		5'h17: out <= 8'h6E;//n
-// 		5'h18: out <= 8'h64;//d
-// 		5'h19: out <= 8'h6F;//o
-// 		5'h1A: out <= 8'h2E;//.
-// 		5'h1B: out <= 8'h2E;//.
-// 		5'h1C: out <= 8'h2E;//.
-// 		default: out <= 8'h20;
-// 		endcase
-// 	end
-	
-// 	16'd5: // Nova mensagem para "Processo Concluido"
-// 	begin
-// 		case (index)
-// 		// Linha 1: "Processo"
-// 		5'h00: out <= 8'h50; // P
-// 		5'h01: out <= 8'h72; // r
-// 		5'h02: out <= 8'h6F; // o
-// 		5'h03: out <= 8'h63; // c
-// 		5'h04: out <= 8'h65; // e
-// 		5'h05: out <= 8'h73; // s
-// 		5'h06: out <= 8'h73; // s
-// 		5'h07: out <= 8'h6F; // o
-		
-// 		// Linha 2: "Concluido!"
-// 		5'h10: out <= 8'h43; // C
-// 		5'h11: out <= 8'h6F; // o
-// 		5'h12: out <= 8'h6E; // n
-// 		5'h13: out <= 8'h63; // c
-// 		5'h14: out <= 8'h6C; // l
-// 		5'h15: out <= 8'h75; // u
-// 		5'h16: out <= 8'h69; // i
-// 		5'h17: out <= 8'h64; // d
-// 		5'h18: out <= 8'h6F; // o
-// 		5'h19: out <= 8'h21; // !
-
-// 		default: out <= 8'h20; // Espaço em branco por padrão
-// 		endcase
-// 	end
-
-// 	endcase
-// endmodule
