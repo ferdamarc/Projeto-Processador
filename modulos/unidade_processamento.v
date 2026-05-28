@@ -3,7 +3,7 @@ module unidade_processamento
     parameter DATA_WIDTH = 32,                  // Largura dos dados
     parameter INSTR_ADDR_WIDTH = 13,            // Largura do endereço da ROM/MI
     parameter DATA_ADDR_WIDTH = 13,             // Largura do endereço da RAM/MD
-    parameter PROGRS_INIT = 13'd1000,           // Endereço de início dos programas
+    parameter PROGRS_INIT = 13'd2000,           // Endereço de início dos programas (SO 0..1999)
     parameter VGA_PIXEL_SCALING_FACTOR = 8      // Fator de escala usado para diminuir o buffer
 )
 ( 
@@ -473,7 +473,7 @@ module unidade_processamento
       .is_jump(control_jump),                           // JUMP ou JAL
       .is_branch(control_branch),                       // BEQ ou BNE efetivo
       .is_jr(jr | jalr),                                // JR ou JALR
-      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 1000
+      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 2000
       .endereco_saida(endereco_com_offset)
   );
 

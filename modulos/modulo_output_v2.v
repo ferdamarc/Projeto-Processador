@@ -28,9 +28,9 @@ module modulo_output_v2
   output [6:0]  display_fp_1,                     // Display 3 do PC (centenas) — HEX4
   output [6:0]  display_fp_2,                     // Display 4 do PC (milhares) — HEX5
 
-  // Saídas PS2
-  output [7:0] seg,
-  output [3:0] dig,
+  // Saídas do display de 7 segmentos multiplexado (4 dígitos) — sem relação com PS/2
+  output [7:0] seg,                               // Linhas de segmento (bit 7 fixo em 1)
+  output [3:0] dig,                               // Seleção de dígito (ativo-baixo)
 
   // Clock
   input         clk                               // Clock de 50 MHz

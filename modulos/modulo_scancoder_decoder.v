@@ -29,6 +29,24 @@ module scancode_decoder (
   // A Keyboard Enter Key (Can be any key, but this is a common one)
   localparam KEY_ENTER = 8'h5A;
 
+  // Letras adicionais para o grid 3x3 do Player 1
+  localparam KEY_Q = 8'h15;
+  localparam KEY_W = 8'h1D;
+  localparam KEY_S = 8'h1B;
+  localparam KEY_Z = 8'h1A;
+  localparam KEY_X = 8'h22;
+
+  // Numpad (NumLock ON, byte único) — grid 3x3 do Player 2
+  localparam KEY_KP1 = 8'h69;
+  localparam KEY_KP2 = 8'h72;
+  localparam KEY_KP3 = 8'h7A;
+  localparam KEY_KP4 = 8'h6B;
+  localparam KEY_KP5 = 8'h73;
+  localparam KEY_KP6 = 8'h74;
+  localparam KEY_KP7 = 8'h6C;
+  localparam KEY_KP8 = 8'h75;
+  localparam KEY_KP9 = 8'h7D;
+
   always @(*) begin
     case (scan_code)
       KEY_0: begin
@@ -83,8 +101,54 @@ module scancode_decoder (
         ascii_code = 8'h46;  // ASCII 'F'
       end
 
+      // Player 1 — grid 3x3 com QWE / ASD / ZXC
+      KEY_Q: begin
+        ascii_code = 8'h51;  // ASCII 'Q'
+      end
+      KEY_W: begin
+        ascii_code = 8'h57;  // ASCII 'W'
+      end
+      KEY_S: begin
+        ascii_code = 8'h53;  // ASCII 'S'
+      end
+      KEY_Z: begin
+        ascii_code = 8'h5A;  // ASCII 'Z'
+      end
+      KEY_X: begin
+        ascii_code = 8'h58;  // ASCII 'X'
+      end
+
+      // Player 2 — numpad 1..9 (mapeia para os mesmos ASCII '1'..'9')
+      KEY_KP1: begin
+        ascii_code = 8'h31;  // ASCII '1'
+      end
+      KEY_KP2: begin
+        ascii_code = 8'h32;  // ASCII '2'
+      end
+      KEY_KP3: begin
+        ascii_code = 8'h33;  // ASCII '3'
+      end
+      KEY_KP4: begin
+        ascii_code = 8'h34;  // ASCII '4'
+      end
+      KEY_KP5: begin
+        ascii_code = 8'h35;  // ASCII '5'
+      end
+      KEY_KP6: begin
+        ascii_code = 8'h36;  // ASCII '6'
+      end
+      KEY_KP7: begin
+        ascii_code = 8'h37;  // ASCII '7'
+      end
+      KEY_KP8: begin
+        ascii_code = 8'h38;  // ASCII '8'
+      end
+      KEY_KP9: begin
+        ascii_code = 8'h39;  // ASCII '9'
+      end
+
       default: begin
-        ascii_code = scan_code;  // For debugging: output raw scan code
+        ascii_code = 8'h00;  // Tecla não mapeada → 0x00 (tratada como "nenhuma tecla")
       end
     endcase
   end
