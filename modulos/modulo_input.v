@@ -75,7 +75,7 @@ module modulo_input
     if (pause == 2'd1) begin
       // Modo 1: Normal/rápido (execução automática)
       // Clock de 2MHz (25 ciclos de 50 MHz)
-      if (out == 26'd1_000) begin
+      if (out == 26'd25) begin
         out       <= 26'd0;
         reg_clock <= ~reg_clock;
       end else begin
