@@ -20,9 +20,10 @@ module modulo_offset_base
   reg [ADDR_WIDTH-1:0] resultado;
   
   // Lógica combinacional de aplicação de offset
-  // pc_atual >= 1000 implica o sistema estar em modo user
-  // Neste caso, o offset é aplicado pois o SO está em controle absoluto
-  // e é o primeiro programa na memória de instruções
+  // user_mode é gerado em unidade_processamento.v como (pc_atual >= PROGRS_INIT),
+  // onde PROGRS_INIT é o limiar SO/usuário (atualmente 2000). Quando ativo, o
+  // offset_base ($24) é somado a jumps/branches; o SO é responsável por
+  // configurá-lo via os_set_im_base antes de transferir controle ao programa.
   always @(*) begin
     if (is_jr & user_mode) begin
       // JR/JALR: o endereço já vem absoluto do registrador, não soma offset

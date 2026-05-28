@@ -473,7 +473,7 @@ module unidade_processamento
       .is_jump(control_jump),                           // JUMP ou JAL
       .is_branch(control_branch),                       // BEQ ou BNE efetivo
       .is_jr(jr | jalr),                                // JR ou JALR
-      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 1000
+      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 2000
       .endereco_saida(endereco_com_offset)
   );
 
