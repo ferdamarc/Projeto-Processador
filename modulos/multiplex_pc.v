@@ -12,6 +12,8 @@ module multiplex_pc
   input                    save_pc,               // Salva PC atual
   input                    get_pc_interrup,       // Lê PC de interrupção
   input                    get_interruption,      // Lê qual interrupção ocorreu
+  input                    uart_get_tx_status,    // Lê status da TX da UART
+  input                    uart_tx_ready,         // 1 quando a TX da UART está livre
   
   // Saídas
   output [DATA_WIDTH-1:0]  escolhido_multiplexador_pc  // Valor selecionado
@@ -31,6 +33,9 @@ module multiplex_pc
     end else if (get_interruption) begin
       // Retorna qual interrupção ocorreu
       escolhido = qual_interrupcao;
+    end else if (uart_get_tx_status) begin
+      // Retorna 1 se a TX da UART está livre, 0 caso contrário
+      escolhido = {{(DATA_WIDTH-1){1'b0}}, uart_tx_ready};
     end else begin
       // Valor padrão
       escolhido = dado;
