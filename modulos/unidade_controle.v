@@ -27,7 +27,9 @@ module unidade_controle (
   output       get_interruption,                  // Obtém interrupção
   output       os_jump_to,                        // Jump do SO
   output       os_save_return,                    // Salva retorno do SO
-  output       frame_buffer_write                 // Habilita escrita no framebuffer
+  output       frame_buffer_write,                // Habilita escrita no framebuffer
+  output       uart_send,                         // Dispara transmissao UART (TX)
+  output       uart_get_tx_status                 // Le status da TX (1 = livre)
 );
 
   // Registradores internos de controle
@@ -52,6 +54,8 @@ module unidade_controle (
   reg reg_os_jump_to;
   reg reg_os_save_return;
   reg reg_frame_buffer_write;
+  reg reg_uart_send;
+  reg reg_uart_get_tx_status;
   reg [1:0] reg_in;
   reg [2:0] reg_alu_op;
   reg [1:0] reg_enable;                           // 2 bits para valores 0, 1 e 2
@@ -83,6 +87,8 @@ module unidade_controle (
     reg_os_jump_to <= 1'b0;
     reg_os_save_return <= 1'b0;
     reg_frame_buffer_write <= 1'b0;
+    reg_uart_send <= 1'b0;
+    reg_uart_get_tx_status <= 1'b0;
 
     case (opcode)
       6'b000000: begin  // R type
@@ -228,6 +234,16 @@ module unidade_controle (
         reg_alu_src <= 1'b1;
         reg_frame_buffer_write <= 1'b1;           // Habilita escrita no framebuffer
       end
+
+      6'b011000: begin  // uart_send
+        reg_uart_send <= 1'b1;                    // Dispara a transmissao; nao escreve registrador
+      end
+
+      6'b011011: begin  // uart_tx_ready
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_uart_get_tx_status <= 1'b1;
+      end
     endcase
   end
 
@@ -255,5 +271,7 @@ module unidade_controle (
   assign os_jump_to = reg_os_jump_to;
   assign os_save_return = reg_os_save_return;
   assign frame_buffer_write = reg_frame_buffer_write;
+  assign uart_send = reg_uart_send;
+  assign uart_get_tx_status = reg_uart_get_tx_status;
 
 endmodule
