@@ -79,6 +79,11 @@ set_location_assignment PIN_H5 -to ps2_data_in
 # CONFIRMAR no manual (others/DE2_115_User_manual.pdf). 3,3V: NAO ligar direto
 # em pino 5V; para Arduino->FPGA (RX, futuro) usar divisor/level shifter.
 set_location_assignment PIN_AB22 -to uart_tx_pin
+# UART RX <- TX do Arduino. GPIO[1] do header de 40 vias (pino fisico 2).
+# CONFIRMAR no manual (others/DE2_115_User_manual.pdf). Arduino e 5V: ESTE
+# sentido EXIGE divisor resistivo (ex.: 1k+2k) ou level shifter para nao
+# danificar o pino de 3,3V do FPGA.
+set_location_assignment PIN_AC15 -to uart_rx_pin
 # VGA
 set_location_assignment PIN_G13 -to hsync
 set_location_assignment PIN_C13 -to vsync
@@ -221,6 +226,7 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name VERILOG_FILE modulos/unidade_processamento.v
 set_global_assignment -name VERILOG_FILE modulos/modulo_uart.v
 set_global_assignment -name VERILOG_FILE modulos/uart_tx.v
+set_global_assignment -name VERILOG_FILE modulos/uart_rx.v
 set_global_assignment -name VERILOG_FILE modulos/unidade_pc_output.v
 set_global_assignment -name VERILOG_FILE modulos/unidade_controle_ULA.v
 set_global_assignment -name VERILOG_FILE modulos/unidade_controle.v
