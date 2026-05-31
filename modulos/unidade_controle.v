@@ -29,7 +29,9 @@ module unidade_controle (
   output       os_save_return,                    // Salva retorno do SO
   output       frame_buffer_write,                // Habilita escrita no framebuffer
   output       uart_send,                         // Dispara transmissao UART (TX)
-  output       uart_get_tx_status                 // Le status da TX (1 = livre)
+  output       uart_get_tx_status,                // Le status da TX (1 = livre)
+  output       uart_get_rx_status,                // Le status do RX (1 = byte disponivel)
+  output       uart_get_rx_data                   // Le o byte recebido e consome o flag
 );
 
   // Registradores internos de controle
@@ -56,6 +58,8 @@ module unidade_controle (
   reg reg_frame_buffer_write;
   reg reg_uart_send;
   reg reg_uart_get_tx_status;
+  reg reg_uart_get_rx_status;
+  reg reg_uart_get_rx_data;
   reg [1:0] reg_in;
   reg [2:0] reg_alu_op;
   reg [1:0] reg_enable;                           // 2 bits para valores 0, 1 e 2
@@ -89,6 +93,8 @@ module unidade_controle (
     reg_frame_buffer_write <= 1'b0;
     reg_uart_send <= 1'b0;
     reg_uart_get_tx_status <= 1'b0;
+    reg_uart_get_rx_status <= 1'b0;
+    reg_uart_get_rx_data <= 1'b0;
 
     case (opcode)
       6'b000000: begin  // R type
@@ -244,6 +250,18 @@ module unidade_controle (
         reg_reg_dst <= 1'b1;
         reg_uart_get_tx_status <= 1'b1;
       end
+
+      6'b011010: begin  // uart_rx_available
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_uart_get_rx_status <= 1'b1;
+      end
+
+      6'b011001: begin  // uart_receive
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_uart_get_rx_data <= 1'b1;
+      end
     endcase
   end
 
@@ -273,5 +291,7 @@ module unidade_controle (
   assign frame_buffer_write = reg_frame_buffer_write;
   assign uart_send = reg_uart_send;
   assign uart_get_tx_status = reg_uart_get_tx_status;
+  assign uart_get_rx_status = reg_uart_get_rx_status;
+  assign uart_get_rx_data = reg_uart_get_rx_data;
 
 endmodule
