@@ -51,7 +51,11 @@ module unidade_processamento
     output          vga_sync_n,
     output [7:0]    vga_r,
     output [7:0]    vga_g,
-    output [7:0]    vga_b
+    output [7:0]    vga_b,
+
+    // Interface UART (TX para o Arduino, RX do Arduino)
+    output          uart_tx_pin,
+    input           uart_rx_pin
 );
 
   // DECLARAÇÃO DE SINAIS INTERNOS
@@ -73,6 +77,11 @@ module unidade_processamento
   wire out, jal, disp, save_pc;
   wire get_pc_interrup, set_clock, get_interruption;
   wire os_jump_to, os_save_return, frame_buffer_write;    // diff
+  wire uart_send, uart_get_tx_status;
+  wire uart_get_rx_status, uart_get_rx_data;
+  wire uart_tx_ready_sig;
+  wire uart_rx_ready_sig;
+  wire [7:0] uart_rx_data_sig;
   wire [1:0] in;
   wire [1:0] enable_clock;
   wire [2:0] alu_op;
@@ -282,7 +291,11 @@ module unidade_processamento
       .get_interruption(get_interruption),
       .os_jump_to(os_jump_to),
       .os_save_return(os_save_return),
-      .frame_buffer_write(frame_buffer_write)
+      .frame_buffer_write(frame_buffer_write),
+      .uart_send(uart_send),
+      .uart_get_tx_status(uart_get_tx_status),
+      .uart_get_rx_status(uart_get_rx_status),
+      .uart_get_rx_data(uart_get_rx_data)
   );
 
   unidade_controle_ula ucula (
@@ -488,7 +501,13 @@ module unidade_processamento
       .get_pc_interrup(get_pc_interrup),
       .escolhido_multiplexador_pc(escolhido_multiplexador_pc),
       .get_interruption(get_interruption),
-      .qual_interrupcao(qual_interrupcao)
+      .qual_interrupcao(qual_interrupcao),
+      .uart_get_tx_status(uart_get_tx_status),
+      .uart_tx_ready(uart_tx_ready_sig),
+      .uart_get_rx_status(uart_get_rx_status),
+      .uart_rx_ready(uart_rx_ready_sig),
+      .uart_get_rx_data(uart_get_rx_data),
+      .uart_rx_data(uart_rx_data_sig)
   );
 
   tela_lcd tlcd (
@@ -535,6 +554,20 @@ module unidade_processamento
       .vga_r(vga_r),
       .vga_g(vga_g),
       .vga_b(vga_b)
+  );
+
+  modulo_uart #(
+      .BAUD_DIV(5208)                 // 50 MHz / 9600 baud
+  ) uart (
+      .clk_50(entrada_clock),
+      .send(uart_send),
+      .data_in(br_dado1[7:0]),        // byte a transmitir vem de rs
+      .receive(uart_get_rx_data),     // consome o byte recebido (uart_receive)
+      .rx(uart_rx_pin),               // linha serial vinda do TX do Arduino
+      .tx(uart_tx_pin),
+      .tx_ready(uart_tx_ready_sig),
+      .data_out(uart_rx_data_sig),    // byte recebido -> registrador via multiplex_pc
+      .rx_ready(uart_rx_ready_sig)
   );
 
 endmodule
