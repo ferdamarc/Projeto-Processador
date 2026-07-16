@@ -75,14 +75,7 @@ set_location_assignment PIN_Y23 -to loop_enable
 # Keyboard
 set_location_assignment PIN_G6 -to ps2_clk_in
 set_location_assignment PIN_H5 -to ps2_data_in
-# UART TX -> RX do Arduino. GPIO[0] do header de 40 vias do DE2-115.
-# CONFIRMAR no manual (others/DE2_115_User_manual.pdf). 3,3V: NAO ligar direto
-# em pino 5V; para Arduino->FPGA (RX, futuro) usar divisor/level shifter.
 set_location_assignment PIN_AB22 -to uart_tx_pin
-# UART RX <- TX do Arduino. GPIO[1] do header de 40 vias (pino fisico 2).
-# CONFIRMAR no manual (others/DE2_115_User_manual.pdf). Arduino e 5V: ESTE
-# sentido EXIGE divisor resistivo (ex.: 1k+2k) ou level shifter para nao
-# danificar o pino de 3,3V do FPGA.
 set_location_assignment PIN_AC15 -to uart_rx_pin
 # VGA
 set_location_assignment PIN_G13 -to hsync
