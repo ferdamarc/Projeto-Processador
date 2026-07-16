@@ -23,10 +23,11 @@ module banco_registradores
 
   // Banco de 32 registradores
   reg [DATA_WIDTH-1:0] registradores [31:0];
-  
+
+  integer i;
+
   // Inicialização do banco de registradores
   initial begin
-    integer i;
     for (i = 0; i < 32; i = i + 1) begin
       registradores[i] = {DATA_WIDTH{1'b0}};
     end

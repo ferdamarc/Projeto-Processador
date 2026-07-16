@@ -26,7 +26,12 @@ module unidade_controle (
   output       set_clock,                         // Configura clock
   output       get_interruption,                  // Obtém interrupção
   output       os_jump_to,                        // Jump do SO
-  output       os_save_return                     // Salva retorno do SO
+  output       os_save_return,                    // Salva retorno do SO
+  output       frame_buffer_write,                // Habilita escrita no framebuffer
+  output       uart_send,                         // Dispara transmissao UART (TX)
+  output       uart_get_tx_status,                // Le status da TX (1 = livre)
+  output       uart_get_rx_status,                // Le status do RX (1 = byte disponivel)
+  output       uart_get_rx_data                   // Le o byte recebido e consome o flag
 );
 
   // Registradores internos de controle
@@ -50,6 +55,11 @@ module unidade_controle (
   reg reg_get_interruption;
   reg reg_os_jump_to;
   reg reg_os_save_return;
+  reg reg_frame_buffer_write;
+  reg reg_uart_send;
+  reg reg_uart_get_tx_status;
+  reg reg_uart_get_rx_status;
+  reg reg_uart_get_rx_data;
   reg [1:0] reg_in;
   reg [2:0] reg_alu_op;
   reg [1:0] reg_enable;                           // 2 bits para valores 0, 1 e 2
@@ -80,6 +90,11 @@ module unidade_controle (
     reg_get_interruption <= 1'b0;
     reg_os_jump_to <= 1'b0;
     reg_os_save_return <= 1'b0;
+    reg_frame_buffer_write <= 1'b0;
+    reg_uart_send <= 1'b0;
+    reg_uart_get_tx_status <= 1'b0;
+    reg_uart_get_rx_status <= 1'b0;
+    reg_uart_get_rx_data <= 1'b0;
 
     case (opcode)
       6'b000000: begin  // R type
@@ -155,7 +170,7 @@ module unidade_controle (
 
       6'b011110: begin  // output
         reg_out <= 1'b1;
-        reg_enable <= 2'd2;                       // Espera button 0 ser pressionado
+        reg_enable <= 2'd2;                       // Continua execução automática (não pausa aguardando botão)
       end
 
       6'b000010: begin  // j
@@ -213,6 +228,40 @@ module unidade_controle (
         reg_reg_dst <= 1'b1;
         reg_get_interruption <= 1'b1;
       end
+
+      6'b010111: begin  // get_input_keyboard
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_in <= 2'd2;                           // Seleciona entrada do teclado
+      end
+
+      6'b001111: begin  // pixel_drawing
+        reg_reg_dst <= 1'b1;
+        reg_alu_src <= 1'b1;
+        reg_frame_buffer_write <= 1'b1;           // Habilita escrita no framebuffer
+      end
+
+      6'b011000: begin  // uart_send
+        reg_uart_send <= 1'b1;                    // Dispara a transmissao; nao escreve registrador
+      end
+
+      6'b011011: begin  // uart_tx_ready
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_uart_get_tx_status <= 1'b1;
+      end
+
+      6'b011010: begin  // uart_rx_available
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_uart_get_rx_status <= 1'b1;
+      end
+
+      6'b011001: begin  // uart_receive
+        reg_reg_write <= 1'b1;
+        reg_reg_dst <= 1'b1;
+        reg_uart_get_rx_data <= 1'b1;
+      end
     endcase
   end
 
@@ -239,5 +288,10 @@ module unidade_controle (
   assign get_interruption = reg_get_interruption;
   assign os_jump_to = reg_os_jump_to;
   assign os_save_return = reg_os_save_return;
+  assign frame_buffer_write = reg_frame_buffer_write;
+  assign uart_send = reg_uart_send;
+  assign uart_get_tx_status = reg_uart_get_tx_status;
+  assign uart_get_rx_status = reg_uart_get_rx_status;
+  assign uart_get_rx_data = reg_uart_get_rx_data;
 
 endmodule

@@ -7,7 +7,8 @@ module multiplex_entrada
   input  [13:0]            dado_lido_entrada,     // Dado de entrada dos switches
   input  [DATA_WIDTH-1:0]  dado_memoria_ula,      // Dado da memória ou ULA
   input  [1:0]             in,                    // Sinal de controle (0: mem/ula, 1: entrada)
-  
+  input  [7:0]             dado_lido_keyboard,
+
   // Saídas
   output [DATA_WIDTH-1:0]  escolhido_multiplexador_entrada  // Valor selecionado
 );
@@ -19,6 +20,8 @@ module multiplex_entrada
   always @(*) begin
     if (in == 2'd1) begin
       escolhido = {{(DATA_WIDTH-14){1'b0}}, dado_lido_entrada};
+    end else if (in == 2'd2) begin
+      escolhido = {{(DATA_WIDTH-8){1'b0}}, dado_lido_keyboard};
     end else begin
       escolhido = dado_memoria_ula;
     end

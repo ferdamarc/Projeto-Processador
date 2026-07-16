@@ -1,26 +1,30 @@
 module unidade_processamento 
 #(
-    parameter DATA_WIDTH = 32,          // Largura dos dados
-    parameter INSTR_ADDR_WIDTH = 13,     // Largura do endereço da ROM/MI
-    parameter DATA_ADDR_WIDTH = 13      // Largura do endereço da RAM/MD
+    parameter DATA_WIDTH = 32,                  // Largura dos dados
+    parameter INSTR_ADDR_WIDTH = 13,            // Largura do endereço da ROM/MI
+    parameter DATA_ADDR_WIDTH = 13,             // Largura do endereço da RAM/MD
+    parameter PROGRS_INIT = 13'd2000,           // Endereço de início dos programas (SO 0..1999)
+    parameter VGA_PIXEL_SCALING_FACTOR = 8      // Fator de escala usado para diminuir o buffer
 )
-(
+( 
     // Entradas Principais
-    input           entrada_clock,       // Clock principal de 50MHz da placa
-    input           botao,               // Botão de entrada para outras funções
-    input           botao_continue,      // Novo botão dedicado ao avanço manual (continue)
-    input [13:0]    sw,                  // Switches para entrada de dados
-	 input           loop_enable,          // Switch que permite a execução em loop do programa; não reinicia o sistema
+    input           entrada_clock,              // Clock principal de 50MHz da placa
+    input           botao,                      // Botão de entrada para outras funções
+    input           botao_continue,             // Novo botão dedicado ao avanço manual (continue)
+    input [13:0]    sw,                         // Switches para entrada de dados
+	input           loop_enable,                // Switch que permite a execução em loop do programa; não reinicia o sistema
 
-    /* diff */
+    // Saída de debug para VGA
+    output [0:0]    LEDG,                        // LEDG[0]: trava em 1 após a primeira escrita no framebuffer
+
     // Entradas para teclado PS/2
-    //input           ps2_clk_in,          // Clock do teclado PS/2'
-    //input           ps2_data_in,         // Dados do teclado PS/2
+    input           ps2_clk_in,                 // Clock do teclado PS/2
+    input           ps2_data_in,                // Dados do teclado PS/2
 
     // Saídas para LEDs e Displays
-	 output          led_loop_status,      // LED utilizado apenas para mostrar que o modo loop está ativado
-    output [13:0]   led,                 // LEDs para saída de dados e status
-    output [6:0]    display1,            // Displays de 7 segmentos
+	output          led_loop_status,            // LED utilizado apenas para mostrar que o modo loop está ativado
+    output [13:0]   led,                        // LEDs para saída de dados e status
+    output [6:0]    display1,                   // Displays de 7 segmentos
     output [6:0]    display2,
     output [6:0]    display3,
     output [6:0]    display4,
@@ -30,20 +34,28 @@ module unidade_processamento
     output [6:0]    display_fp2,
       
     // Interface com o Display LCD
-    output          LCD_ON,
+    output          LCD_ON,                     // Display LCD
     output          LCD_BLON,
     output          LCD_RW,
     output          LCD_EN,
     output          LCD_RS,
-    inout  [7:0]    LCD_DATA
+    inout  [7:0]    LCD_DATA,
 
-    /* diff */
     // Saídas para VGA
-    //output [2:0]    disp_rgb,            // Saída RGB para VGA
-    //output          hsync,               // Sinal de sincronização horizontal
-    //output          vsync,               // Sinal de sincronização vertical
-    //output [7:0]    seg,               // segmentos do display 7-segmentos
-    //output [3:0]    dig                // dígitos do display 7-segmentos
+    output          hsync,
+    output          vsync,
+
+    // Interface ADV7123 DAC
+    output          vga_clk_out,
+    output          vga_blank_n,
+    output          vga_sync_n,
+    output [7:0]    vga_r,
+    output [7:0]    vga_g,
+    output [7:0]    vga_b,
+
+    // Interface UART (TX para o Arduino, RX do Arduino)
+    output          uart_tx_pin,
+    input           uart_rx_pin
 );
 
   // DECLARAÇÃO DE SINAIS INTERNOS
@@ -65,6 +77,11 @@ module unidade_processamento
   wire out, jal, disp, save_pc;
   wire get_pc_interrup, set_clock, get_interruption;
   wire os_jump_to, os_save_return, frame_buffer_write;    // diff
+  wire uart_send, uart_get_tx_status;
+  wire uart_get_rx_status, uart_get_rx_data;
+  wire uart_tx_ready_sig;
+  wire uart_rx_ready_sig;
+  wire [7:0] uart_rx_data_sig;
   wire [1:0] in;
   wire [1:0] enable_clock;
   wire [2:0] alu_op;
@@ -101,7 +118,13 @@ module unidade_processamento
 
   // Sinais de Entrada/Saída
   wire [13:0] resultado_entrada;
+  wire [7:0]  ps2_data_out;
   wire saida_botao;
+
+  // Sinal de debug do VGA
+  // Este registrador funciona como um latch: quando a CPU executar pelo menos
+  // uma instrução que habilite frame_buffer_write, LEDG[0] fica aceso.
+  reg vga_write_seen;
 
   // Sinais dos Multiplexadores
   wire [DATA_WIDTH-1:0] escolhido_multiplexador_mem_to_reg;
@@ -129,6 +152,17 @@ module unidade_processamento
     qual_interrupcao = {DATA_WIDTH{1'b0}};
     pc_interrup = {INSTR_ADDR_WIDTH{1'b0}};
     pc_retorno_so = {INSTR_ADDR_WIDTH{1'b0}};
+    vga_write_seen = 1'b0;
+  end
+
+  // LEDG[0] acende de forma permanente após a primeira tentativa de escrita
+  // no framebuffer. Assim, não dependemos de enxergar pulsos rápidos no LED.
+  assign LEDG[0] = vga_write_seen;
+
+  always @(posedge clock) begin
+    if (frame_buffer_write) begin
+      vga_write_seen <= 1'b1;
+    end
   end
   
   // Extensor de Imediato: estende imediato de 16 para 32 bits
@@ -189,7 +223,10 @@ module unidade_processamento
   end
 
   // INSTANCIAÇÃO DOS MÓDULOS
-  modulo_output_v2 exit (
+  modulo_output_v2 # (
+    .DATA_WIDTH(DATA_WIDTH)
+  )
+  exit (
       .valor_saida(escolhido_multiplexador_saida),
       .halt(halt),
       .clock_cpu(clock),
@@ -217,15 +254,15 @@ module unidade_processamento
       .botao(botao),
       .botao_continue(botao_continue),
       .sw(sw),
-      //.ps2_clk(ps2_clk_in),    // diff
-      //.ps2_data(ps2_data_in),    // diff
+      .ps2_clk(ps2_clk_in),
+      .ps2_data(ps2_data_in),
       .pause(enable_clock),
       .in(in),
       .resultado_entrada(resultado_entrada),
-      //.resultadoKeyBoard(resultadoKeyBoard),    // diff
       .saida_botao(saida_botao),
       .saida_botao_continue(),
-      .saida_clock(clock)
+      .saida_clock(clock),
+      .ps2_data_out(ps2_data_out)
   );
 
   unidade_controle uc (
@@ -253,8 +290,12 @@ module unidade_processamento
       .set_clock(set_clock),
       .get_interruption(get_interruption),
       .os_jump_to(os_jump_to),
-      .os_save_return(os_save_return)
-      //.frame_buffer_write(frame_buffer_write)    // diff
+      .os_save_return(os_save_return),
+      .frame_buffer_write(frame_buffer_write),
+      .uart_send(uart_send),
+      .uart_get_tx_status(uart_get_tx_status),
+      .uart_get_rx_status(uart_get_rx_status),
+      .uart_get_rx_data(uart_get_rx_data)
   );
 
   unidade_controle_ula ucula (
@@ -393,7 +434,7 @@ module unidade_processamento
       .dado_lido_entrada(resultado_entrada),
       .dado_memoria_ula(escolhido_multiplexador_jal),
       .in(in),
-      //.KeyboardInput(resultadoKeyBoard),    // diff
+      .dado_lido_keyboard(ps2_data_out),
       .escolhido_multiplexador_entrada(escolhido_multiplexador_entrada)
   );
 
@@ -441,11 +482,11 @@ module unidade_processamento
       .DATA_WIDTH(DATA_WIDTH)
   ) offset_base_module (
       .endereco_entrada(escolhido_multiplexador_jump_reg),
-      .pc_atual(endereco_instrucao),
       .reg_base(offset_base),
-      .is_jump(control_jump),         // JUMP ou JAL
-      .is_branch(control_branch),     // BEQ ou BNE efetivo
-      .is_jr(jr | jalr),              // JR ou JALR
+      .is_jump(control_jump),                           // JUMP ou JAL
+      .is_branch(control_branch),                       // BEQ ou BNE efetivo
+      .is_jr(jr | jalr),                                // JR ou JALR
+      .user_mode(endereco_instrucao >= PROGRS_INIT),    // User mode se o PC atual for >= 2000
       .endereco_saida(endereco_com_offset)
   );
 
@@ -460,7 +501,13 @@ module unidade_processamento
       .get_pc_interrup(get_pc_interrup),
       .escolhido_multiplexador_pc(escolhido_multiplexador_pc),
       .get_interruption(get_interruption),
-      .qual_interrupcao(qual_interrupcao)
+      .qual_interrupcao(qual_interrupcao),
+      .uart_get_tx_status(uart_get_tx_status),
+      .uart_tx_ready(uart_tx_ready_sig),
+      .uart_get_rx_status(uart_get_rx_status),
+      .uart_rx_ready(uart_rx_ready_sig),
+      .uart_get_rx_data(uart_get_rx_data),
+      .uart_rx_data(uart_rx_data_sig)
   );
 
   tela_lcd tlcd (
@@ -491,16 +538,36 @@ module unidade_processamento
       .int_time(instrucao[15:0])
   );
 
-  /* diff */
-  /*modulo_vga mvga (
+  modulo_vga #(
+      .PIXEL_SCALING_FACTOR(VGA_PIXEL_SCALING_FACTOR)
+  ) mvga (
       .clock(entrada_clock),
+      .write_clk(clock),
       .wr_en(frame_buffer_write),
-      .wr_addr(saida_ula[16:0]), // Assuming saida_ula[16:0] is the address for framebuffer
-      .wr_data(br_dado2[2:0]), // We want to display the lower 3 bits of the ULA output
-      .disp_rgb(disp_rgb),
+      .wr_addr(saida_ula[16:0]),
+      .wr_data(br_dado2[2:0]),
       .hsync(hsync),
-      .vsync(vsync)
+      .vsync(vsync),
+      .vga_clk_out(vga_clk_out),
+      .vga_blank_n(vga_blank_n),
+      .vga_sync_n(vga_sync_n),
+      .vga_r(vga_r),
+      .vga_g(vga_g),
+      .vga_b(vga_b)
   );
-  */
+
+  modulo_uart #(
+      .BAUD_DIV(5208)                 // 50 MHz / 9600 baud
+  ) uart (
+      .clk_50(entrada_clock),
+      .send(uart_send),
+      .data_in(br_dado1[7:0]),        // byte a transmitir vem de rs
+      .receive(uart_get_rx_data),     // consome o byte recebido (uart_receive)
+      .rx(uart_rx_pin),               // linha serial vinda do TX do Arduino
+      .tx(uart_tx_pin),
+      .tx_ready(uart_tx_ready_sig),
+      .data_out(uart_rx_data_sig),    // byte recebido -> registrador via multiplex_pc
+      .rx_ready(uart_rx_ready_sig)
+  );
 
 endmodule

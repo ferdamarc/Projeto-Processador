@@ -1,12 +1,21 @@
 module modulo_output_v2
+#(
+  parameter DATA_WIDTH = 32,                      // Largura do barramento de dados
+  parameter PC_WIDTH   = 13,                      // Largura do PC (idealmente igual à MI)
+  parameter FP_WIDTH   = DATA_WIDTH               // Largura do frame pointer
+)
 (
   // Entradas de dados
-  input  [31:0] valor_saida,                      // Valor a ser exibido (instrução OUT)
+  input  [DATA_WIDTH-1:0] valor_saida,           // Valor a ser exibido (instrução OUT)
   input         halt,                             // Sinal de HALT (não utilizado atualmente)
   input         clock_cpu,                        // Clock sincronizado com CPU
   input         enable_out,                       // Habilita captura de valor de saída
   input         enable_in,                        // Habilita exibição em LEDs de entrada
   input         switch_enable,                    // SW[13] controla LED 13
+
+  // Entradas de monitoramento
+  input  [PC_WIDTH-1:0] pc,                      // Program Counter atual
+  input  [FP_WIDTH-1:0] fp,                      // Frame Pointer ($29)
   
   // Saídas para LEDs e displays
   output [13:0] led,                              // 14 LEDs
@@ -16,12 +25,14 @@ module modulo_output_v2
   output [6:0]  display_4,                        // Display 4 (milhares do valor)
   output [6:0]  display_pc_1,                     // Display 1 do PC (unidades)
   output [6:0]  display_pc_2,                     // Display 2 do PC (dezenas)
-  output [6:0]  display_fp_1,                     // Display 1 do FP (unidades)
-  output [6:0]  display_fp_2,                     // Display 2 do FP (dezenas)
-  
-  // Entradas de monitoramento
-  input  [9:0]  pc,                               // Program Counter atual
-  input  [31:0] fp,                               // Frame Pointer ($29)
+  output [6:0]  display_fp_1,                     // Display 3 do PC (centenas) — HEX4
+  output [6:0]  display_fp_2,                     // Display 4 do PC (milhares) — HEX5
+
+  // Saídas do display de 7 segmentos multiplexado (4 dígitos) — sem relação com PS/2
+  output [7:0] seg,                               // Linhas de segmento (bit 7 fixo em 1)
+  output [3:0] dig,                               // Seleção de dígito (ativo-baixo)
+
+  // Clock
   input         clk                               // Clock de 50 MHz
 );
 
@@ -38,8 +49,15 @@ module modulo_output_v2
   // Registradores para LEDs
   reg        reg_led_13;                          // LED 13 (status SW[13])
   reg [12:0] reg_leds;                            // LEDs 0-12 (dados)
-  reg [31:0] valor_registrado;                    // Armazena valor capturado para exibição
+  reg [DATA_WIDTH-1:0] valor_registrado;         // Armazena valor capturado para exibição
   
+  wire [7:0] _seg;
+  reg  [3:0] _dig;
+
+  reg [1:0] digit_sel = 0;
+  reg [3:0] digit_values [3:0];
+  reg [19:0] clk_240hz_counter;
+
   // Inicialização
   initial begin
     valor_display_1   <= 4'd0;
@@ -52,15 +70,22 @@ module modulo_output_v2
     valor_display_fp_2 <= 4'd0;
     reg_led_13        <= 1'b0;
     reg_leds          <= 13'd0;
-    valor_registrado  <= 32'd0;
+    valor_registrado  <= {DATA_WIDTH{1'b0}};
+    clk_240hz_counter <= 20'd0;
   end
 
-  // Atualização dos displays de valor e FP (sincronizado com clock_cpu)
-  always @(posedge clock_cpu) begin
-    // Atualiza constantemente os dígitos do FP
-    valor_display_fp_1 <= fp % 10;
-    valor_display_fp_2 <= (fp % 100) / 10;
+  always @(posedge clk) begin
+    // Contador para gerar enable a ~240Hz (50MHz / 240 ≈ 208333)
+    if (clk_240hz_counter >= 208333) begin
+      clk_240hz_counter <= 20'd0;
+      digit_sel <= digit_sel + 1; // Alterna entre os dígitos
+    end else begin
+      clk_240hz_counter <= clk_240hz_counter + 1;
+    end
+  end
 
+  // Atualização dos displays de valor (sincronizado com clock_cpu)
+  always @(posedge clock_cpu) begin
     // Captura e armazena valor quando enable_out e switch_enable ativos
     if (enable_out && switch_enable) begin
       valor_registrado <= valor_saida;
@@ -71,26 +96,46 @@ module modulo_output_v2
     valor_display_2 <= (valor_registrado % 100) / 10;
     valor_display_3 <= (valor_registrado % 1000) / 100;
     valor_display_4 <= (valor_registrado % 10000) / 1000;
+
+    digit_values[0] <= valor_display_1;
+    digit_values[1] <= valor_display_2;
+    digit_values[2] <= valor_display_3;
+    digit_values[3] <= valor_display_4;
   end
 
-  // Atualização dos displays de PC e LEDs (usando clock de 50MHz)
   always @(posedge clk) begin
-    // Mostra os últimos dois dígitos do PC
-    valor_display_pc_1 <= pc % 10;
-    valor_display_pc_2 <= (pc % 100) / 10;
+    if (clk_240hz_counter == 20'd0) begin
+      // Mostra os quatro últimos dígitos decimais do PC em HEX7-4 (big-endian: leitura esquerda→direita)
+      valor_display_pc_1 <= (pc % 10000) / 1000;       // HEX7: milhares  (dígito mais significativo)
+      valor_display_pc_2 <= (pc % 1000)  / 100;        // HEX6: centenas
+      valor_display_fp_2 <= (pc % 100)   / 10;         // HEX5: dezenas
+      valor_display_fp_1 <= pc % 10;                   // HEX4: unidades  (dígito menos significativo)
 
-    // LED 13 indica se os switches estão habilitados
-    reg_led_13 <= switch_enable;
+      // LED 13 indica se os switches estão habilitados
+      reg_led_13 <= switch_enable;
 
-    // LEDs 0-12 mostram os 13 bits menos significativos quando enable_in ativo
-    if (enable_in) begin
-      reg_leds <= valor_saida[12:0];
-    end else begin
-      reg_leds <= 13'd0;
+      // LEDs 0-12 mostram os 13 bits menos significativos quando enable_in ativo
+      if (enable_in) begin
+        reg_leds <= valor_saida[12:0];
+      end else begin
+        reg_leds <= 13'd0;
+      end
     end
   end
 
-  // Instâncias dos conversores BCD → 7 segmentos para valores de saída
+  always @(posedge clk) begin
+    case (digit_sel)
+      2'b00: _dig <= 4'b1110; // Ativa o primeiro dígito
+      2'b01: _dig <= 4'b1101; // Ativa o segundo dígito
+      2'b10: _dig <= 4'b1011; // Ativa o terceiro dígito
+      2'b11: _dig <= 4'b0111; // Ativa o quarto dígito
+      default: begin
+        _dig <= 4'b1111; // Desativa todos os dígitos
+      end
+    endcase
+  end
+
+  // Instâncias dos conversores BCD para valores de saída
   display_7segmentos bcd_1 (
     .bcd(valor_display_1),
     .seg(display_1)
@@ -111,7 +156,6 @@ module modulo_output_v2
     .seg(display_4)
   );
 
-  // Conversores BCD → 7 segmentos para PC
   display_7segmentos bcd_pc_1 (
     .bcd(valor_display_pc_1),
     .seg(display_pc_1)
@@ -122,7 +166,6 @@ module modulo_output_v2
     .seg(display_pc_2)
   );
 
-  // Conversores BCD → 7 segmentos para FP
   display_7segmentos bcd_fp_1 (
     .bcd(valor_display_fp_1),
     .seg(display_fp_1)
@@ -133,7 +176,14 @@ module modulo_output_v2
     .seg(display_fp_2)
   );
 
+  display_7segmentos bcd_seg (
+    .bcd(digit_values[digit_sel]),
+    .seg(_seg)
+  );
+
   // Atribuição dos LEDs (LED13 = status SW[13], LEDs 0-12 = dados)
   assign led = {reg_led_13, reg_leds[12:0]};
+  assign seg = {1'd1, _seg[6:0]};
+  assign dig = _dig;
 
 endmodule

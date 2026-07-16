@@ -7,3 +7,15 @@ incremental_db/
 # Manuais e arquivos auxiliares
 others/DE2_115_User_manual.pdf
 
+# Temporaly files
+output_files/*
+# Except for the final output file
+!output_files/Projeto-Processador.sof
+
+# ModelSim Simulation
+simulation/modelsim/
+
+# Documentation and reports
+reports/
+docs/
+
